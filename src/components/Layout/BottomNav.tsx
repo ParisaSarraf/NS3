@@ -13,7 +13,7 @@ export function BottomNav() {
       style={{
         background: "rgba(15, 23, 42, 0.4)",
         border: "1px solid rgba(255, 255, 255, 0.05)",
-        borderRadius: "16px",
+        borderRadius: "10px",
         padding: "12px 24px",
         display: "flex",
         justifyContent: "space-between",
