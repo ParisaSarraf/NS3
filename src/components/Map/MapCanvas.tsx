@@ -102,21 +102,10 @@ export function MapCanvas() {
   }, [initMap, mapRef]);
 
   // Labels structure matching your image
-  const latLabels = [
-    "25° 30' N",
-    "25° 00' N",
-    "24° 30' N",
-    "24° 00' N",
-    "23° 30' N",
-  ];
-  const lngLabels = [
-    "120° 30' E",
-    "121° 00' E",
-    "121° 30' E",
-    "122° 00' E",
-    "122° 30' E",
-  ];
+  const latLabels = ["40° 00' N", "35° 00' N", "30° 00' N", "25° 00' N"];
+  const lngLabels = ["45° 00' E", "50° 00' E", "55° 00' E", "60° 00' E"];
 
+  
   return (
     <div
       style={{

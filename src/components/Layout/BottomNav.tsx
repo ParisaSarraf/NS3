@@ -1,11 +1,13 @@
+import { Ship, Network, Timer, Map, CloudSun, Wind } from "lucide-react";
+
 export function BottomNav() {
   const telemetryItems = [
-    { icon: "🚢", label: "TOTAL SHIPS", value: "4" },
-    { icon: "🔗", label: "ACTIVE LINKS", value: "6" },
-    { icon: "⏱️", label: "SIMULATION TIME", value: "02:45:32" },
-    { icon: "🗺️", label: "SCENARIO", value: "Open Sea Transit" },
-    { icon: "🌤️", label: "WEATHER", value: "Moderate" },
-    { icon: "💨", label: "WIND", value: "18 kn, NE" },
+    { icon: Ship, label: "TOTAL SHIPS", value: "4" },
+    { icon: Network, label: "ACTIVE LINKS", value: "6" },
+    { icon: Timer, label: "SIMULATION TIME", value: "02:45:32" },
+    { icon: Map, label: "SCENARIO", value: "Open Sea Transit" },
+    { icon: CloudSun, label: "WEATHER", value: "Moderate" },
+    { icon: Wind, label: "WIND", value: "18 kn, NE" },
   ];
 
   return (
@@ -28,7 +30,7 @@ export function BottomNav() {
             key={idx}
             style={{ display: "flex", alignItems: "center", gap: "12px" }}
           >
-            <span style={{ fontSize: "18px", opacity: 0.8 }}>{item.icon}</span>
+            <span style={{ opacity: 0.8 }}><item.icon /></span>
             <div>
               <span
                 style={{
@@ -36,7 +38,7 @@ export function BottomNav() {
                   fontSize: "10px",
                   color: "#64748b",
                   fontWeight: "600",
-                  letterSpacing: "0.5px",
+                  letterSpacing: "0.8px",
                 }}
               >
                 {item.label}
@@ -54,6 +56,7 @@ export function BottomNav() {
             </div>
           </div>
         ))}
+        
       </div>
 
       <div
@@ -65,7 +68,7 @@ export function BottomNav() {
           color: "#64748b",
         }}
       >
-        <span>v2.4.1</span>
+        <span>v0.0.1</span>
         <span style={{ color: "#22c55e", fontWeight: "600" }}>● CONNECTED</span>
       </div>
     </div>
