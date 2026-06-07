@@ -149,7 +149,7 @@ export function AlertsTable() {
               </span>
             </div>
 
-            <span style={{ color: "#94a3b8", fontFamily: "monospace" }}>
+            <span style={{ color: "#94a3b8" }}>
               {alert.target}
             </span>
 
@@ -172,7 +172,6 @@ export function AlertsTable() {
               style={{
                 color: "#64748b",
                 textAlign: "right",
-                fontFamily: "monospace",
               }}
             >
               {alert.timestamp}

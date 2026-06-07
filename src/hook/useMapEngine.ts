@@ -546,8 +546,7 @@ export function useMapEngine() {
         label.style.textAlign = "center";
         label.style.color = "#fff";
         label.style.fontSize = "10px";
-        label.style.fontFamily = "sans-serif";
-        label.style.fontWeight = "600";
+
         label.style.textShadow = "0 1px 3px rgba(0,0,0,0.9)";
         label.style.marginTop = "4px";
         label.innerHTML = `<span style="color: ${hub.color}">${hub.name}</span><br/><span style="color: #cbd5e1; font-weight: 400; font-size: 9px;">${hub.details}</span>`;

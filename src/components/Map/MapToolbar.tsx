@@ -1,3 +1,5 @@
+import { Minus, Plus } from "lucide-react";
+
 interface MapToolbarProps {
   onZoomIn: () => void;
   onZoomOut: () => void;
@@ -28,26 +30,31 @@ export function MapToolbar({
     <div
       style={{
         position: "absolute",
-        top: "12px",
-        right: "12px",
+        top: "15px",
+        right: "848px",
         zIndex: 5,
         display: "flex",
         flexDirection: "column",
         gap: "6px",
       }}
     >
-      <button onClick={onZoomIn} style={btnStyle} title="Zoom In">
-        ＋
-      </button>
-      <button onClick={onZoomOut} style={btnStyle} title="Zoom Out">
-        －
-      </button>
       <button
         onClick={onToggleTopology}
-        style={{ ...btnStyle, width: "auto", padding: "10px" }}
+        style={{
+          ...btnStyle,
+          width: "auto",
+          padding: "10px",
+          fontFamily: "'JetBrains Mono', monospace",
+        }}
         title="Toggle Network Mesh"
       >
-        📡 Mesh Topology
+        Mesh Topology
+      </button>
+      <button onClick={onZoomIn} style={{ ...btnStyle, fontFamily: "'JetBrains Mono', monospace" }} title="Zoom In">
+        <Plus />
+      </button>
+      <button onClick={onZoomOut} style={{ ...btnStyle, fontFamily: "'JetBrains Mono', monospace" }} title="Zoom Out">
+        <Minus />
       </button>
     </div>
   );

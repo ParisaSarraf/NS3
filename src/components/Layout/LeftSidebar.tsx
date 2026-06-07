@@ -1,10 +1,12 @@
+import { LayoutDashboard, Map, Network, Ship, BarChart3 } from "lucide-react";
 export function LeftSidebar() {
+
   const items = [
-    { icon: "🎛️", label: "Overview", active: true },
-    { icon: "🗺️", label: "Map" },
-    { icon: "📡", label: "Network" },
-    { icon: "🚢", label: "Ships" },
-    { icon: "📊", label: "Metrics" },
+    { icon: LayoutDashboard, label: "Overview", active: true },
+    { icon: Map, label: "Map" },
+    { icon: Network, label: "Network" },
+    { icon: Ship, label: "Ships" },
+    { icon: BarChart3, label: "Metrics" },
   ];
 
   return (
@@ -34,7 +36,9 @@ export function LeftSidebar() {
             color: item.active ? "#3b82f6" : "#fff",
           }}
         >
-          <span style={{ fontSize: "18px" }}>{item.icon}</span>
+          <span style={{ fontSize: "18px" }}>
+            <item.icon style={{ fontSize: 20 }} />
+          </span>
           <span style={{ fontSize: "9px" }}>{item.label}</span>
         </div>
       ))}

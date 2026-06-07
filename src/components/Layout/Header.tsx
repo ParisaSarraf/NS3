@@ -32,7 +32,7 @@ export function Header() {
           alignItems: "center",
         }}
       >
-        <span style={{ fontFamily: "monospace", color: "#94a3b8" }}>
+        <span style={{ color: "#94a3b8" }}>
           UTC 2026-06-07 06:28:10
         </span>
         <div

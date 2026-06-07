@@ -21,7 +21,7 @@ export default function Dashboard() {
         width: "100vw", 
         color: "#fff",
         overflow: "hidden", 
-        fontFamily: "sans-serif",
+        fontFamily: "JetBrains Mono, monospace",
       }}
     >
       <LeftSidebar />

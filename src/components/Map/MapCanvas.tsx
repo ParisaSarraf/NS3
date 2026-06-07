@@ -134,7 +134,6 @@ export function MapCanvas() {
           fontSize: "10px",
           color: "#64748b",
           pointerEvents: "none",
-          fontFamily: "monospace",
         }}
       >
         {latLabels.map((lbl) => (
@@ -154,7 +153,6 @@ export function MapCanvas() {
           fontSize: "10px",
           color: "#64748b",
           pointerEvents: "none",
-          fontFamily: "monospace",
         }}
       >
         {lngLabels.map((lbl) => (
