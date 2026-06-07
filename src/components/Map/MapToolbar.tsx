@@ -30,8 +30,8 @@ export function MapToolbar({
     <div
       style={{
         position: "absolute",
-        top: "15px",
-        right: "848px",
+        top: "10px",
+        right: "865px",
         zIndex: 5,
         display: "flex",
         flexDirection: "column",

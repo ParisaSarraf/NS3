@@ -22,7 +22,7 @@ export function LeftSidebar() {
         gap: "20px",
       }}
     >
-      <div style={{ fontSize: "20px", marginBottom: "20px" }}>⚓</div>
+      {/* <div style={{ fontSize: "20px", marginBottom: "20px" }}>⚓</div> */}
       {items.map((item, idx) => (
         <div
           key={idx}
