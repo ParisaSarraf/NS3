@@ -1,15 +1,22 @@
+import type { Feature } from "../utils/types";
 
 export const dataTransformer = {
-  formatTimestamp(seconds: number): string {
-    const date = new Date(seconds * 1000);
-    return date.toTimeString().split(" ")[0];
+  toTimeSeries(rawFeatures: Feature[]) {
+    return rawFeatures.map((f) => {
+      const geom = JSON.parse(f.geom);
+      return {
+        id: f.id,
+        label: f.label,
+        type: f.type,
+        coordinates: geom.coordinates || [0, 0],
+      };
+    });
   },
 
-  computeMbps(bytes: number, latencyMs: number): number {
-    if (latencyMs === 0) return 0;
-    const bits = bytes * 8;
-    const seconds = latencyMs / 1000;
-    const mbps = (bits / seconds) / 1000000;
-    return parseFloat(mbps.toFixed(1));
-  }
+  extractMetricMatrix(payload: any[], metricKey: string) {
+    return payload.map((item) => ({
+      time: item.timestamp || "00:00",
+      value: item[metricKey] || 0,
+    }));
+  },
 };

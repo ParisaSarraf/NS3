@@ -46,3 +46,11 @@ export interface MappedPacketLoss {
   id: string;
   value: number;
 }
+
+export type Feature = {
+  id: string;
+  label: string;
+  type: string;
+  geom: string;
+};
+
