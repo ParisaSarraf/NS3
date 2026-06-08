@@ -1,27 +1,15 @@
 
 export const dataTransformer = {
-  /**
-   * Transforms operational vessel records directly into standard Recharts time series formats.
-   */
-  toTimeSeries(rawFeatures: Feature[]) {
-    return rawFeatures.map((f) => {
-      const geom = JSON.parse(f.geom);
-      return {
-        id: f.id,
-        label: f.label,
-        type: f.type,
-        coordinates: geom.coordinates || [0, 0],
-      };
-    });
+  formatTimestamp(seconds: number): string {
+    const date = new Date(seconds * 1000);
+    return date.toTimeString().split(" ")[0];
   },
 
-  /**
-   * Extracts historical network delay arrays and splits them by vessel item names.
-   */
-  extractMetricMatrix(payload: any[], metricKey: string) {
-    return payload.map((item) => ({
-      time: item.timestamp || "00:00",
-      value: item[metricKey] || 0,
-    }));
-  },
+  computeMbps(bytes: number, latencyMs: number): number {
+    if (latencyMs === 0) return 0;
+    const bits = bytes * 8;
+    const seconds = latencyMs / 1000;
+    const mbps = (bits / seconds) / 1000000;
+    return parseFloat(mbps.toFixed(1));
+  }
 };
