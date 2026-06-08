@@ -1,7 +1,7 @@
 interface ThroughputGaugeProps {
   name: string;
   value: number;
-  color?: string; // Optional custom color fallback parameter
+  color?: string; 
 }
 
 export function ThroughputGauge({ name, value, color }: ThroughputGaugeProps) {
@@ -10,17 +10,14 @@ export function ThroughputGauge({ name, value, color }: ThroughputGaugeProps) {
   const normalizedValue = Math.min(Math.max(value, 0), 100);
   const circumference = 2 * Math.PI * radius;
 
-  const angleRange = 240; // Balanced open arc scale matching your layout image
-  const rotationAngle = 150; // Aligns 0 smoothly down to the bottom-left boundary
+  const angleRange = 240; 
+  const rotationAngle = 150; 
 
-  // Perfect mathematics rendering computation loops for dash dimensions
   const totalArcLength = (angleRange / 360) * circumference;
   const strokeDashoffset = totalArcLength - (normalizedValue / 100) * totalArcLength;
 
-  // Calculates the physical vector pointer needle's rotation transformation property matrix
   const needleRotation = rotationAngle + (normalizedValue / 100) * angleRange;
 
-  // Custom inline theme helper assigning distinct font highlights seen in your image
   const getNameColor = (shipName: string) => {
     if (color) return color;
     if (shipName.includes("01")) return "#3B8BD4";
@@ -31,7 +28,6 @@ export function ThroughputGauge({ name, value, color }: ThroughputGaugeProps) {
 
   const nameColor = getNameColor(name);
 
-  // Position parameters map mapping numerical strings neatly to the base canvas
   const ticks = [
     { label: "0", angle: rotationAngle },
     { label: "25", angle: rotationAngle + angleRange * 0.25 },
@@ -49,7 +45,6 @@ export function ThroughputGauge({ name, value, color }: ThroughputGaugeProps) {
         width: "130px",
       }}
     >
-      {/* Ship Item Title Banner */}
       <span
         style={{
           fontSize: "12px",
@@ -65,14 +60,12 @@ export function ThroughputGauge({ name, value, color }: ThroughputGaugeProps) {
       <div style={{ position: "relative", width: "110px", height: "110px" }}>
         <svg width="110" height="110" viewBox="0 0 100 100">
           <defs>
-            {/* Smooth linear neon color gradient track fill map */}
             <linearGradient id={`gauge-grad-${name}`} x1="0%" y1="100%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#0072ff" />
               <stop offset="100%" stopColor="#00c6ff" />
             </linearGradient>
           </defs>
 
-          {/* Underlay Track Arc */}
           <circle
             cx="50"
             cy="50"
@@ -85,7 +78,6 @@ export function ThroughputGauge({ name, value, color }: ThroughputGaugeProps) {
             strokeLinecap="round"
           />
 
-          {/* Live Metric Active Vector Foreground Arc */}
           <circle
             cx="50"
             cy="50"
@@ -100,11 +92,9 @@ export function ThroughputGauge({ name, value, color }: ThroughputGaugeProps) {
             style={{ transition: "stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }}
           />
 
-          {/* Scale Numeric Ticks Overlay */}
           {ticks.map((tick, idx) => {
-            // Trigonometric radial translation tracking positions out from center coordinates
             const rad = ((tick.angle - 90) * Math.PI) / 180;
-            const textRadius = radius - 10; // Inset text positioning bounds
+            const textRadius = radius - 10; 
             const x = 50 + textRadius * Math.cos(rad);
             const y = 52 + textRadius * Math.sin(rad);
 
@@ -124,13 +114,12 @@ export function ThroughputGauge({ name, value, color }: ThroughputGaugeProps) {
             );
           })}
 
-          {/* Vector Pointer Needle Module */}
           <g transform={`rotate(${needleRotation} 50 50)`}>
             <line
               x1="50"
               y1="50"
               x2="50"
-              y2="18" // Needle length extension boundary
+              y2="18" 
               stroke="#cbd5e1"
               strokeWidth="2"
               strokeLinecap="round"

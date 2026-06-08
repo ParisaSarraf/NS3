@@ -70,13 +70,11 @@ export function useMapEngine() {
         },
       });
 
-      // 2. Widen Lat/Lng Graticule lines over Middle East matrix coordinates
       map.addSource("grid-lines", {
         type: "geojson",
         data: {
           type: "FeatureCollection",
           features: [
-            // Latitude Lines
             {
               type: "Feature",
               geometry: {
@@ -117,7 +115,6 @@ export function useMapEngine() {
                 ],
               },
             },
-            // Longitude Lines
             {
               type: "Feature",
               geometry: {
@@ -173,28 +170,27 @@ export function useMapEngine() {
         },
       });
 
-      // 3. Anchor Hub Markers
       const hubs = [
         {
           name: "TEHRAN-HQ",
           color: "#3B8BD4",
           coords: [51.4204, 35.6944],
           details: "35.69 N, 51.42 E",
-          icon: "🏛️", // HQ headquarters icon
+          icon: "🏛️", 
         },
         {
           name: "MASHHAD-NODE",
           color: "#10B981",
           coords: [59.6159, 36.2972],
           details: "36.29 N, 59.61 E",
-          icon: "📡", // Network node icon
+          icon: "📡",
         },
         {
           name: "ISFAHAN-RELAY",
           color: "#F59E0B",
           coords: [51.666, 32.6546],
           details: "32.65 N, 51.66 E",
-          icon: "🔄", // Relay station icon
+          icon: "🔄",
         },
       ];
 
