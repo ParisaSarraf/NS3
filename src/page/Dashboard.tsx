@@ -8,9 +8,39 @@ import { AlertsTable } from "../components/Table/AlertsTable";
 import { BottomNav } from "../components/Layout/BottomNav";
 import { useTelemetryData } from "../hook/useTelemetryData";
 import { darkGlassCardStyle } from "../utils/constants";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const { delayData, packetData, throughputData } = useTelemetryData();
+
+  useEffect(() => {
+    let socket: WebSocket | null = null;
+    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+    const connect = () => {
+      socket = new WebSocket(import.meta.env.VITE_WS_URL);
+      socket.onopen = () => {
+        console.log("WebSocket: ON");
+      };
+      socket.onclose = () => {
+        console.log("WebSocket: OFF");
+        reconnectTimeout = setTimeout(connect, 2000);
+      };
+      socket.onerror = (err) => {
+        console.error("WebSocket Error:", err);
+      };
+      socket.onmessage = (event) => {
+        console.log(event.data);
+      };
+    };
+
+    connect();
+
+    return () => {
+      if (reconnectTimeout) clearTimeout(reconnectTimeout);
+      if (socket) socket.close();
+    };
+  }, []);
+
   return (
     <div
       style={{
@@ -88,7 +118,13 @@ export default function Dashboard() {
               >
                 NETWORK DELAY (ms)
               </h3>
-              <div style={{ height: "1px", backgroundColor: "#1e293b", margin: "12px 0" }}></div>
+              <div
+                style={{
+                  height: "1px",
+                  backgroundColor: "#1e293b",
+                  margin: "12px 0",
+                }}
+              ></div>
               <DelayLineChart data={delayData} />
             </div>
             <div style={{ ...darkGlassCardStyle, padding: "16px" }}>
@@ -102,7 +138,13 @@ export default function Dashboard() {
               >
                 THROUGHPUT (Mbps)
               </h3>
-              <div style={{ height: "1px", backgroundColor: "#1e293b", margin: "12px 0" }}></div>
+              <div
+                style={{
+                  height: "1px",
+                  backgroundColor: "#1e293b",
+                  margin: "12px 0",
+                }}
+              ></div>
               <div
                 style={{
                   display: "flex",
@@ -141,7 +183,13 @@ export default function Dashboard() {
                 >
                   PACKET LOSS (%)
                 </h3>
-                <div style={{ height: "1px", backgroundColor: "#1e293b", margin: "12px 0" }}></div>
+                <div
+                  style={{
+                    height: "1px",
+                    backgroundColor: "#1e293b",
+                    margin: "12px 0",
+                  }}
+                ></div>
                 <PacketBarChart data={packetData} />
               </div>
               <div
