@@ -1,7 +1,7 @@
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -14,7 +14,7 @@ export function DelayLineChart({ data }: { data: any[] }) {
   return (
     <div style={{ width: "100%", height: 220 }}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
+        <AreaChart
           data={data}
           margin={{ top: 5, right: 10, left: -25, bottom: 5 }}
         >
@@ -41,16 +41,17 @@ export function DelayLineChart({ data }: { data: any[] }) {
           />
           <Legend wrapperStyle={{ fontSize: "11px", paddingTop: 10 }} />
           {Object.entries(CYBER_THEME.vesselColors).map(([key, color]) => (
-            <Line
+            <Area
               key={key}
-              type="monotone"
+              type="monotoneY"
               dataKey={key}
               stroke={color}
               strokeWidth={2}
-              dot={false}
+              fill={color}
+              fillOpacity={0.2}
             />
           ))}
-        </LineChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );

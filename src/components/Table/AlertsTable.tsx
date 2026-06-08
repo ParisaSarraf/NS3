@@ -50,12 +50,12 @@ export function AlertsTable() {
   const getSeverityStyle = (severity: AlertLog["severity"]) => {
     switch (severity) {
       case "CRITICAL":
-        case "CRITICAL":
-          return {
-            color: "#ef4444",
-            background: CYBER_THEME.severityColors.CRITICAL,
-            border: "1px solid rgba(239, 68, 68, 0.4)",
-           };
+      case "CRITICAL":
+        return {
+          color: "#ef4444",
+          background: CYBER_THEME.severityColors.CRITICAL,
+          border: "1px solid rgba(239, 68, 68, 0.4)",
+        };
       case "WARNING":
         return {
           color: "#f59e0b",
@@ -124,12 +124,13 @@ export function AlertsTable() {
               background: "rgba(255, 255, 255, 0.02)",
               border: "1px solid rgba(255, 255, 255, 0.04)",
               borderRadius: "10px",
-              fontSize: "12px",
+              fontSize: "11px",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <span
                 style={{
+                  fontSize: "25px",
                   color:
                     alert.severity === "CRITICAL"
                       ? "#ef4444"
@@ -149,9 +150,7 @@ export function AlertsTable() {
               </span>
             </div>
 
-            <span style={{ color: "#94a3b8" }}>
-              {alert.target}
-            </span>
+            <span style={{ color: "#94a3b8" }}>{alert.target}</span>
 
             <div style={{ display: "flex" }}>
               <span

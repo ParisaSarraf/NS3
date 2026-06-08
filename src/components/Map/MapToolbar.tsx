@@ -31,7 +31,7 @@ export function MapToolbar({
       style={{
         position: "absolute",
         top: "10px",
-        right: "865px",
+        right: "848px",
         zIndex: 5,
         display: "flex",
         flexDirection: "column",

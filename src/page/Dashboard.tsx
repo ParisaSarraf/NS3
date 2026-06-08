@@ -11,21 +11,19 @@ import { darkGlassCardStyle } from "../utils/constants";
 
 export default function Dashboard() {
   const { delayData, packetData, throughputData } = useTelemetryData();
-
   return (
     <div
       style={{
         display: "flex",
         backgroundColor: "#060913",
-        height: "100vh", 
-        width: "100vw", 
+        height: "100vh",
+        width: "100vw",
         color: "#fff",
-        overflow: "hidden", 
+        overflow: "hidden",
         fontFamily: "JetBrains Mono, monospace",
       }}
     >
       <LeftSidebar />
-
       <div
         style={{
           flex: 1,
@@ -33,21 +31,20 @@ export default function Dashboard() {
           flexDirection: "column",
           padding: "16px",
           gap: "16px",
-          height: "100vh", 
+          height: "100vh",
           boxSizing: "border-box",
-          overflow: "hidden", 
+          overflow: "hidden",
         }}
       >
         <Header />
-
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "1.2fr 1fr",
-            gridTemplateRows: "1fr", 
+            gridTemplateRows: "1fr",
             gap: "16px",
             flex: 1,
-            minHeight: 0, 
+            minHeight: 0,
             overflow: "hidden",
           }}
         >
@@ -56,7 +53,7 @@ export default function Dashboard() {
               display: "flex",
               flexDirection: "column",
               height: "100%",
-              minHeight: 0, 
+              minHeight: 0,
             }}
           >
             <div
@@ -70,14 +67,13 @@ export default function Dashboard() {
               <MapCanvas />
             </div>
           </div>
-
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               gap: "16px",
               height: "100%",
-              overflowY: "auto", 
+              overflowY: "auto",
             }}
             className="custom-scroll"
           >
@@ -94,7 +90,37 @@ export default function Dashboard() {
               </h3>
               <DelayLineChart data={delayData} />
             </div>
-
+            <div style={{ ...darkGlassCardStyle, padding: "16px" }}>
+              <h3
+                style={{
+                  margin: "0 0 10px 0",
+                  fontSize: "12px",
+                  color: "#64748b",
+                  fontWeight: "700",
+                }}
+              >
+                THROUGHPUT (Mbps)
+              </h3>
+              <div style={{ height: "1px", backgroundColor: "#1e293b", margin: "12px 0" }}></div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: "4px",
+                  height: "70%",
+                }}
+              >
+                {throughputData.map((ship) => (
+                  <ThroughputGauge
+                    key={ship.id}
+                    name={ship.id}
+                    value={ship.value}
+                  />
+                ))}
+              </div>
+            </div>
             <div
               style={{
                 display: "grid",
@@ -116,52 +142,19 @@ export default function Dashboard() {
                 </h3>
                 <PacketBarChart data={packetData} />
               </div>
-
-              <div style={{ ...darkGlassCardStyle, padding: "16px" }}>
-                <h3
-                  style={{
-                    margin: "0 0 10px 0",
-                    fontSize: "12px",
-                    color: "#64748b",
-                    fontWeight: "700",
-                  }}
-                >
-                  THROUGHPUT (Mbps)
-                </h3>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                    gap: "4px",
-                    height: "85%",
-                  }}
-                >
-                  {throughputData.map((ship) => (
-                    <ThroughputGauge
-                      key={ship.id}
-                      name={ship.id}
-                      value={ship.value}
-                    />
-                  ))}
-                </div>
+              <div
+                style={{
+                  ...darkGlassCardStyle,
+                  padding: "16px",
+                  flex: 1,
+                  minHeight: "200px",
+                }}
+              >
+                <AlertsTable />
               </div>
-            </div>
-
-            <div
-              style={{
-                ...darkGlassCardStyle,
-                padding: "16px",
-                flex: 1,
-                minHeight: "200px",
-              }}
-            >
-              <AlertsTable />
             </div>
           </div>
         </div>
-
         <BottomNav />
       </div>
     </div>

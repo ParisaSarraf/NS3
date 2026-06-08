@@ -1,20 +1,44 @@
 interface ThroughputGaugeProps {
   name: string;
   value: number;
+  color?: string; // Optional custom color fallback parameter
 }
 
-export function ThroughputGauge({ name, value }: ThroughputGaugeProps) {
-  const radius = 40;
-  const strokeWidth = 6;
+export function ThroughputGauge({ name, value, color }: ThroughputGaugeProps) {
+  const radius = 38;
+  const strokeWidth = 5;
   const normalizedValue = Math.min(Math.max(value, 0), 100);
   const circumference = 2 * Math.PI * radius;
 
-  const angleRange = 270;
-  const strokeDasharray = circumference;
-  const strokeDashoffset =
-    circumference -
-    (normalizedValue / 100) * (angleRange / 360) * circumference;
-  const rotationAngle = 135;
+  const angleRange = 240; // Balanced open arc scale matching your layout image
+  const rotationAngle = 150; // Aligns 0 smoothly down to the bottom-left boundary
+
+  // Perfect mathematics rendering computation loops for dash dimensions
+  const totalArcLength = (angleRange / 360) * circumference;
+  const strokeDashoffset = totalArcLength - (normalizedValue / 100) * totalArcLength;
+
+  // Calculates the physical vector pointer needle's rotation transformation property matrix
+  const needleRotation = rotationAngle + (normalizedValue / 100) * angleRange;
+
+  // Custom inline theme helper assigning distinct font highlights seen in your image
+  const getNameColor = (shipName: string) => {
+    if (color) return color;
+    if (shipName.includes("01")) return "#3B8BD4";
+    if (shipName.includes("02")) return "#10B981";
+    if (shipName.includes("03")) return "#A855F7";
+    return "#F59E0B"; // Default fallback for SHIP-04
+  };
+
+  const nameColor = getNameColor(name);
+
+  // Position parameters map mapping numerical strings neatly to the base canvas
+  const ticks = [
+    { label: "0", angle: rotationAngle },
+    { label: "25", angle: rotationAngle + angleRange * 0.25 },
+    { label: "50", angle: rotationAngle + angleRange * 0.5 },
+    { label: "75", angle: rotationAngle + angleRange * 0.75 },
+    { label: "100", angle: rotationAngle + angleRange },
+  ];
 
   return (
     <div
@@ -22,66 +46,121 @@ export function ThroughputGauge({ name, value }: ThroughputGaugeProps) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        width: "110px",
+        width: "130px",
       }}
     >
+      {/* Ship Item Title Banner */}
       <span
         style={{
           fontSize: "12px",
-          color: "#94a3b8",
-          fontWeight: "600",
-          marginBottom: "8px",
+          color: nameColor,
+          fontWeight: "700",
+          marginBottom: "12px",
+          letterSpacing: "0.5px",
         }}
       >
         {name}
       </span>
-      <div style={{ position: "relative", width: "90px", height: "90px" }}>
-        <svg width="90" height="90" viewBox="0 0 100 100">
+
+      <div style={{ position: "relative", width: "110px", height: "110px" }}>
+        <svg width="110" height="110" viewBox="0 0 100 100">
+          <defs>
+            {/* Smooth linear neon color gradient track fill map */}
+            <linearGradient id={`gauge-grad-${name}`} x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#0072ff" />
+              <stop offset="100%" stopColor="#00c6ff" />
+            </linearGradient>
+          </defs>
+
+          {/* Underlay Track Arc */}
           <circle
             cx="50"
             cy="50"
             r={radius}
             fill="transparent"
-            stroke="rgba(255,255,255,0.06)"
+            stroke="rgba(255, 255, 255, 0.08)"
             strokeWidth={strokeWidth}
-            strokeDasharray={`${circumference * (angleRange / 360)} ${circumference}`}
+            strokeDasharray={`${totalArcLength} ${circumference}`}
             transform={`rotate(${rotationAngle} 50 50)`}
             strokeLinecap="round"
           />
+
+          {/* Live Metric Active Vector Foreground Arc */}
           <circle
             cx="50"
             cy="50"
             r={radius}
             fill="transparent"
-            stroke="#06b6d4"
+            stroke={`url(#gauge-grad-${name})`}
             strokeWidth={strokeWidth}
-            strokeDasharray={strokeDasharray}
+            strokeDasharray={`${totalArcLength} ${circumference}`}
             strokeDashoffset={strokeDashoffset}
             transform={`rotate(${rotationAngle} 50 50)`}
             strokeLinecap="round"
-            style={{ transition: "stroke-dashoffset 0.5s ease" }}
+            style={{ transition: "stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }}
           />
+
+          {/* Scale Numeric Ticks Overlay */}
+          {ticks.map((tick, idx) => {
+            // Trigonometric radial translation tracking positions out from center coordinates
+            const rad = ((tick.angle - 90) * Math.PI) / 180;
+            const textRadius = radius - 10; // Inset text positioning bounds
+            const x = 50 + textRadius * Math.cos(rad);
+            const y = 52 + textRadius * Math.sin(rad);
+
+            return (
+              <text
+                key={idx}
+                x={x}
+                y={y}
+                fill="#64748b"
+                fontSize="8px"
+                fontWeight="600"
+                textAnchor="middle"
+                dominantBaseline="middle"
+              >
+                {tick.label}
+              </text>
+            );
+          })}
+
+          {/* Vector Pointer Needle Module */}
+          <g transform={`rotate(${needleRotation} 50 50)`}>
+            <line
+              x1="50"
+              y1="50"
+              x2="50"
+              y2="18" // Needle length extension boundary
+              stroke="#cbd5e1"
+              strokeWidth="2"
+              strokeLinecap="round"
+              style={{ transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }}
+            />
+            <circle cx="50" cy="50" r="3" fill="#f8fafc" />
+          </g>
         </svg>
+
         <div
           style={{
             position: "absolute",
-            top: "50%",
+            bottom: "-4px",
             left: "50%",
-            transform: "translate(-50%, -50%)",
+            transform: "translateX(-50%)",
             textAlign: "center",
           }}
         >
           <span
             style={{
-              fontSize: "15px",
+              fontSize: "16px",
               fontWeight: "700",
               color: "#f8fafc",
               display: "block",
+              lineHeight: "1",
             }}
           >
-            {value}
+            {value.toFixed(1)}
           </span>
-          <span style={{ fontSize: "10px", color: "#64748b" }}>Mbps</span>
+          <span style={{ fontSize: "10px", color: "#64748b", fontWeight: "600" }}>Mbps</span>
         </div>
       </div>
     </div>
