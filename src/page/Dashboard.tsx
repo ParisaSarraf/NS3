@@ -88,6 +88,7 @@ export default function Dashboard() {
               >
                 NETWORK DELAY (ms)
               </h3>
+              <div style={{ height: "1px", backgroundColor: "#1e293b", margin: "12px 0" }}></div>
               <DelayLineChart data={delayData} />
             </div>
             <div style={{ ...darkGlassCardStyle, padding: "16px" }}>
@@ -140,6 +141,7 @@ export default function Dashboard() {
                 >
                   PACKET LOSS (%)
                 </h3>
+                <div style={{ height: "1px", backgroundColor: "#1e293b", margin: "12px 0" }}></div>
                 <PacketBarChart data={packetData} />
               </div>
               <div

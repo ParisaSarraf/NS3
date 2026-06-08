@@ -98,10 +98,10 @@ export function AlertsTable() {
         >
           ALERTS LOG SYSTEM
         </h3>
-        <span style={{ fontSize: "11px", color: "#64748b", cursor: "pointer" }}>
-          ALL SEVERITY ▾
-        </span>
       </div>
+      <div
+        style={{ height: "1px", backgroundColor: "#1e293b", margin: "5px 0" }}
+      ></div>
 
       <div
         style={{

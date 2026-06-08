@@ -30,7 +30,9 @@ export function BottomNav() {
             key={idx}
             style={{ display: "flex", alignItems: "center", gap: "12px" }}
           >
-            <span style={{ opacity: 0.8 }}><item.icon /></span>
+            <span style={{ opacity: 0.8 }}>
+              <item.icon />
+            </span>
             <div>
               <span
                 style={{
@@ -54,9 +56,18 @@ export function BottomNav() {
                 {item.value}
               </span>
             </div>
+            {idx < telemetryItems.length - 1 && (
+              <div
+                style={{
+                  width: "1px",
+                  height: "44px",
+                  background: "rgba(255, 255, 255, 0.2)",
+                  marginLeft: "40px",
+                }}
+              />
+            )}
           </div>
         ))}
-        
       </div>
 
       <div
