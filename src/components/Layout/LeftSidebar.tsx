@@ -1,12 +1,12 @@
-import { LayoutDashboard, Map, Network, Ship, BarChart3 } from "lucide-react";
+import { Map, Network, Radar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 export function LeftSidebar() {
+  const navigate = useNavigate();
 
   const items = [
-    { icon: LayoutDashboard, label: "Overview", active: true },
-    // { icon: Map, label: "Map" },
-    // { icon: Network, label: "Network" },
-    // { icon: Ship, label: "Ships" },
-    // { icon: BarChart3, label: "Metrics" },
+    { icon: Network, label: "NS3", to: "/NS3" },
+    { icon: Map, label: "Map", to: "/Map" },
+    { icon: Radar, label: "LiDar", to: "/lidar" },
   ];
 
   return (
@@ -22,7 +22,6 @@ export function LeftSidebar() {
         gap: "20px",
       }}
     >
-      {/* <div style={{ fontSize: "20px", marginBottom: "20px" }}>⚓</div> */}
       {items.map((item, idx) => (
         <div
           key={idx}
@@ -32,9 +31,10 @@ export function LeftSidebar() {
             alignItems: "center",
             gap: "4px",
             cursor: "pointer",
-            opacity: item.active ? 1 : 0.4,
-            color: item.active ? "#3b82f6" : "#fff",
+            opacity: item.to === window.location.pathname ? 1 : 0.4,
+            color: item.to === window.location.pathname ? "#3b82f6" : "#fff",
           }}
+          onClick={() => navigate(item.to)}
         >
           <span style={{ fontSize: "18px" }}>
             <item.icon style={{ fontSize: 20 }} />

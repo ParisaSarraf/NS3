@@ -1,3 +1,5 @@
+// ------------------------------- Network System Types -------------------------------
+
 export interface SimulationEventLog {
   time: number;
   flow: string;
@@ -39,7 +41,7 @@ export interface MappedThroughput {
 
 export interface MappedDelayPoint {
   time: string;
-  [shipKey: string]: number | string; 
+  [shipKey: string]: number | string;
 }
 
 export interface MappedPacketLoss {
@@ -54,3 +56,27 @@ export type Feature = {
   geom: string;
 };
 
+// ------------------------------------- Map Types -------------------------------------
+export type Mode = "point" | "line" | "polygon" | "delete" | null;
+
+export interface PointGeometry {
+  type: "Point";
+  coordinates: [number, number];
+}
+
+export interface LineStringGeometry {
+  type: "LineString";
+  coordinates: [number, number][];
+}
+
+export interface PolygonGeometry {
+  type: "Polygon";
+  coordinates: [number, number][][];
+}
+
+export type GeometryData = PointGeometry | LineStringGeometry | PolygonGeometry;
+
+export interface PendingGeometry {
+  type: "point" | "line" | "polygon" | "delete";
+  geomData: GeometryData;
+}

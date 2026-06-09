@@ -1,4 +1,4 @@
-import { darkGlassCardStyle } from "../../utils/constants";
+import { darkGlassCardStyle } from "../../../utils/constants";
 
 interface MapOverlayProps {
   vessels: Array<{ id: string; lat: string; lng: string; speed: string }>;

@@ -1,36 +1,39 @@
 import {
   ResponsiveContainer,
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
+  Cell,
 } from "recharts";
-import { CYBER_THEME } from "../../utils/constants";
+import { CYBER_THEME } from "../../../utils/constants";
 
-export function DelayLineChart({ data }: { data: any[] }) {
+export function PacketBarChart({ data }: { data: any[] }) {
+  const colorsArray = Object.values(CYBER_THEME.vesselColors);
+
   return (
     <div style={{ width: "100%", height: 220 }}>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
+        <BarChart
           data={data}
-          margin={{ top: 5, right: 10, left: -25, bottom: 5 }}
+          margin={{ top: 20, right: 10, left: -25, bottom: 5 }}
         >
           <CartesianGrid
             strokeDasharray="3 3"
             stroke="rgba(255,255,255,0.05)"
+            vertical={false}
           />
           <XAxis
-            dataKey="time"
+            dataKey="name"
             tick={{ fill: "#64748b", fontSize: 11 }}
             stroke="rgba(255,255,255,0.1)"
           />
           <YAxis
             tick={{ fill: "#64748b", fontSize: 11 }}
             stroke="rgba(255,255,255,0.1)"
-            domain={[0, 50]}
+            domain={[0, 25]}
           />
           <Tooltip
             contentStyle={{
@@ -39,20 +42,19 @@ export function DelayLineChart({ data }: { data: any[] }) {
               color: "#fff",
             }}
           />
-          <Legend wrapperStyle={{ fontSize: "11px", paddingTop: 10 }} />
-          {Object.entries(CYBER_THEME.vesselColors).map(([key, color]) => (
-            <Area
-              key={key}
-              type="monotoneY"
-              dataKey={key}
-              stroke={color}
-              strokeWidth={2}
-              fill={color}
-              fillOpacity={0.2}
-              connectNulls={false}
-            />
-          ))}
-        </AreaChart>
+          <Bar
+            dataKey="loss"
+            radius={[6, 6, 0, 0]}
+            label={{ position: "top", fill: "#cbd5e1", fontSize: 11 }}
+          >
+            {data.map((_, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={colorsArray[index % colorsArray.length]}
+              />
+            ))}
+          </Bar>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );
