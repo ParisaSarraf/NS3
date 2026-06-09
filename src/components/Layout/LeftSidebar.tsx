@@ -3,10 +3,10 @@ export function LeftSidebar() {
 
   const items = [
     { icon: LayoutDashboard, label: "Overview", active: true },
-    { icon: Map, label: "Map" },
-    { icon: Network, label: "Network" },
-    { icon: Ship, label: "Ships" },
-    { icon: BarChart3, label: "Metrics" },
+    // { icon: Map, label: "Map" },
+    // { icon: Network, label: "Network" },
+    // { icon: Ship, label: "Ships" },
+    // { icon: BarChart3, label: "Metrics" },
   ];
 
   return (

@@ -24,7 +24,7 @@ export default function Dashboard() {
         fontFamily: "JetBrains Mono, monospace",
       }}
     >
-      {/* <LeftSidebar /> */}
+      <LeftSidebar />
       <div
         style={{
           flex: 1,
