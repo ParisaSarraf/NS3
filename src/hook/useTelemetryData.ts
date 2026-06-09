@@ -107,7 +107,7 @@ export function useTelemetryData() {
       setThroughputData((prev) => {
         const mbps =
           msg.latency_ms > 0
-            ? (msg.payload_bytes * 8) / (msg.latency_ms * 1000)
+            ?  (msg.latency_ms )
             : 0;
         return prev.map((item) =>
           item.id === sourceKey
