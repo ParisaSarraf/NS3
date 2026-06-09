@@ -30,7 +30,7 @@ export function DelayLineChart({ data }: { data: any[] }) {
           <YAxis
             tick={{ fill: "#64748b", fontSize: 11 }}
             stroke="rgba(255,255,255,0.1)"
-            domain={[0, 400]}
+            domain={[0, 50]}
           />
           <Tooltip
             contentStyle={{
@@ -49,6 +49,7 @@ export function DelayLineChart({ data }: { data: any[] }) {
               strokeWidth={2}
               fill={color}
               fillOpacity={0.2}
+              connectNulls={false}
             />
           ))}
         </AreaChart>

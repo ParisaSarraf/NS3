@@ -1,157 +1,188 @@
 interface ThroughputGaugeProps {
   name: string;
   value: number;
-  color?: string; 
+  color?: string;
+}
+
+const CX = 75, CY = 88, R_OUTER = 68, R_INNER = 48, R_TRACK = 58;
+const START_DEG = 210, RANGE = 300;
+
+function degToRad(deg: number) {
+  return (deg - 90) * (Math.PI / 180);
+}
+
+function ptOnCircle(cx: number, cy: number, r: number, deg: number): [number, number] {
+  const a = degToRad(deg);
+  return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+}
+
+function arcPath(cx: number, cy: number, r: number, startDeg: number, endDeg: number) {
+  const [sx, sy] = ptOnCircle(cx, cy, r, startDeg);
+  const [ex, ey] = ptOnCircle(cx, cy, r, endDeg);
+  const large = endDeg - startDeg > 180 ? 1 : 0;
+  return `M${sx},${sy} A${r},${r},0,${large},1,${ex},${ey}`;
+}
+
+const TICK_LABELS: Record<number, string> = {
+  0: "0", 25: "25", 50: "50", 75: "75", 100: "100",
+};
+
+function getColor(name: string, color?: string) {
+  if (color) return color;
+  if (name.includes("01")) return "#3B8BD4";
+  if (name.includes("02")) return "#10B981";
+  if (name.includes("03")) return "#A855F7";
+  return "#F59E0B";
 }
 
 export function ThroughputGauge({ name, value, color }: ThroughputGaugeProps) {
-  const radius = 38;
-  const strokeWidth = 5;
-  const normalizedValue = Math.min(Math.max(value, 0), 100);
-  const circumference = 2 * Math.PI * radius;
+  const shipColor = getColor(name, color);
+  const norm = Math.min(Math.max(value, 0), 100);
+  const fillEndDeg = START_DEG + (norm / 100) * RANGE;
+  const needleDeg = START_DEG + (norm / 100) * RANGE;
+  const gradId = `gauge-grad-${name}`;
 
-  const angleRange = 240; 
-  const rotationAngle = 150; 
+  const [nx, ny] = ptOnCircle(CX, CY, R_INNER + 10, needleDeg);
+  const [pax, pay] = ptOnCircle(CX, CY, 4, needleDeg + 90);
+  const [pbx, pby] = ptOnCircle(CX, CY, 4, needleDeg - 90);
 
-  const totalArcLength = (angleRange / 360) * circumference;
-  const strokeDashoffset = totalArcLength - (normalizedValue / 100) * totalArcLength;
+  const ticks = Array.from({ length: 21 }, (_, i) => {
+    const pct = i / 20;
+    const tickDeg = START_DEG + pct * RANGE;
+    const isMajor = i % 5 === 0;
+    const rOuter = R_OUTER - 2;
+    const rInner = isMajor ? R_OUTER - 10 : R_OUTER - 6;
+    const [x1, y1] = ptOnCircle(CX, CY, rOuter, tickDeg);
+    const [x2, y2] = ptOnCircle(CX, CY, rInner, tickDeg);
 
-  const needleRotation = rotationAngle + (normalizedValue / 100) * angleRange;
+    let label = null;
+    if (isMajor) {
+      const labelPct = Math.round(pct * 100);
+      const [lx, ly] = ptOnCircle(CX, CY, R_OUTER - 20, tickDeg);
+      label = (
+        <text
+          key={`lbl-${i}`}
+          x={lx} y={ly}
+          fill="#4a5a7a"
+          fontSize="8"
+          fontWeight="600"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fontFamily="JetBrains Mono, monospace"
+        >
+          {TICK_LABELS[labelPct]}
+        </text>
+      );
+    }
 
-  const getNameColor = (shipName: string) => {
-    if (color) return color;
-    if (shipName.includes("01")) return "#3B8BD4";
-    if (shipName.includes("02")) return "#10B981";
-    if (shipName.includes("03")) return "#A855F7";
-    return "#F59E0B"; // Default fallback for SHIP-04
-  };
-
-  const nameColor = getNameColor(name);
-
-  const ticks = [
-    { label: "0", angle: rotationAngle },
-    { label: "25", angle: rotationAngle + angleRange * 0.25 },
-    { label: "50", angle: rotationAngle + angleRange * 0.5 },
-    { label: "75", angle: rotationAngle + angleRange * 0.75 },
-    { label: "100", angle: rotationAngle + angleRange },
-  ];
+    return (
+      <>
+        <line
+          key={`tick-${i}`}
+          x1={x1} y1={y1} x2={x2} y2={y2}
+          stroke={isMajor ? "#6a7a9a" : "#2e3d5a"}
+          strokeWidth={isMajor ? 1.5 : 0.8}
+          strokeLinecap="round"
+        />
+        {label}
+      </>
+    );
+  });
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        width: "130px",
-      }}
-    >
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <span
         style={{
+          fontFamily: "JetBrains Mono, monospace",
           fontSize: "12px",
-          color: nameColor,
-          fontWeight: "700",
-          marginBottom: "12px",
+          fontWeight: 700,
+          color: shipColor,
           letterSpacing: "0.5px",
+          marginBottom: "2px",
         }}
       >
         {name}
       </span>
 
-      <div style={{ position: "relative", width: "110px", height: "110px" }}>
-        <svg width="110" height="110" viewBox="0 0 100 100">
-          <defs>
-            <linearGradient id={`gauge-grad-${name}`} x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#0072ff" />
-              <stop offset="100%" stopColor="#00c6ff" />
-            </linearGradient>
-          </defs>
+      <svg
+        width="150"
+        height="110"
+        viewBox="0 0 150 110"
+        style={{ overflow: "visible" , paddingBottom: "20px" }}
+      >
+        <defs>
+          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={shipColor} stopOpacity={0.5} />
+            <stop offset="100%" stopColor={shipColor} stopOpacity={1} />
+          </linearGradient>
+        </defs>
 
-          <circle
-            cx="50"
-            cy="50"
-            r={radius}
-            fill="transparent"
-            stroke="rgba(255, 255, 255, 0.08)"
-            strokeWidth={strokeWidth}
-            strokeDasharray={`${totalArcLength} ${circumference}`}
-            transform={`rotate(${rotationAngle} 50 50)`}
-            strokeLinecap="round"
+        <circle
+          cx={CX} cy={CY} r={R_OUTER + 6}
+          fill="#151c2e"
+          stroke="#1e2a42"
+          strokeWidth={1}
+        />
+
+        <path
+          d={arcPath(CX, CY, R_TRACK, START_DEG, START_DEG + RANGE)}
+          fill="none"
+          stroke="#1a2340"
+          strokeWidth={14}
+          strokeLinecap="butt"
+        />
+
+        {norm > 0 && (
+          <path
+            d={arcPath(CX, CY, R_TRACK, START_DEG, fillEndDeg)}
+            fill="none"
+            stroke={`url(#${gradId})`}
+            strokeWidth={14}
+            strokeLinecap="butt"
+            style={{ transition: "d 0.5s cubic-bezier(0.4,0,0.2,1)" }}
           />
+        )}
+        {ticks}
 
-          <circle
-            cx="50"
-            cy="50"
-            r={radius}
-            fill="transparent"
-            stroke={`url(#gauge-grad-${name})`}
-            strokeWidth={strokeWidth}
-            strokeDasharray={`${totalArcLength} ${circumference}`}
-            strokeDashoffset={strokeDashoffset}
-            transform={`rotate(${rotationAngle} 50 50)`}
-            strokeLinecap="round"
-            style={{ transition: "stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }}
-          />
+        <circle
+          cx={CX} cy={CY} r={R_INNER - 4}
+          fill="#0d1220"
+          stroke="#1e2a42"
+          strokeWidth={1}
+        />
 
-          {ticks.map((tick, idx) => {
-            const rad = ((tick.angle - 90) * Math.PI) / 180;
-            const textRadius = radius - 10; 
-            const x = 50 + textRadius * Math.cos(rad);
-            const y = 52 + textRadius * Math.sin(rad);
+        <path
+          d={`M${pax},${pay} L${nx},${ny} L${pbx},${pby} Z`}
+          fill="#ffffff"
+          opacity={0.95}
+          style={{ transition: "d 0.5s cubic-bezier(0.4,0,0.2,1)" }}
+        />
 
-            return (
-              <text
-                key={idx}
-                x={x}
-                y={y}
-                fill="#64748b"
-                fontSize="8px"
-                fontWeight="600"
-                textAnchor="middle"
-                dominantBaseline="middle"
-              >
-                {tick.label}
-              </text>
-            );
-          })}
+        <circle cx={CX} cy={CY} r={5} fill="#ffffff" opacity={0.9} />
+      </svg>
 
-          <g transform={`rotate(${needleRotation} 50 50)`}>
-            <line
-              x1="50"
-              y1="50"
-              x2="50"
-              y2="18" 
-              stroke="#cbd5e1"
-              strokeWidth="2"
-              strokeLinecap="round"
-              style={{ transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }}
-            />
-            <circle cx="50" cy="50" r="3" fill="#f8fafc" />
-          </g>
-        </svg>
-
-        <div
-          style={{
-            position: "absolute",
-            bottom: "-4px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            textAlign: "center",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "16px",
-              fontWeight: "700",
-              color: "#f8fafc",
-              display: "block",
-              lineHeight: "1",
-            }}
-          >
-            {value.toFixed(1)}
-          </span>
-          <span style={{ fontSize: "10px", color: "#64748b", fontWeight: "600" }}>Mbps</span>
-        </div>
-      </div>
+      <span
+        style={{
+          fontFamily: "JetBrains Mono, monospace",
+          fontSize: "20px",
+          fontWeight: 700,
+          color: "#f0f4ff",
+          marginTop: "-6px",
+          lineHeight: 1,
+        }}
+      >
+        {value.toFixed(1)}
+      </span>
+      <span
+        style={{
+          fontFamily: "JetBrains Mono, monospace",
+          fontSize: "12px",
+          color: "#5a6a8a",
+          fontWeight: 600,
+        }}
+      >
+        Mbps
+      </span>
     </div>
   );
 }

@@ -6,40 +6,11 @@ import { PacketBarChart } from "../components/Charts/PacketBarChart";
 import { ThroughputGauge } from "../components/Charts/ThroughputGauge";
 import { AlertsTable } from "../components/Table/AlertsTable";
 import { BottomNav } from "../components/Layout/BottomNav";
-import { useTelemetryData } from "../hook/useTelemetryData";
 import { darkGlassCardStyle } from "../utils/constants";
-import { useEffect } from "react";
+import { useTelemetryData } from "../hook/useTelemetryData";
 
 export default function Dashboard() {
-  const { delayData, packetData, throughputData } = useTelemetryData();
-
-  useEffect(() => {
-    let socket: WebSocket | null = null;
-    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
-    const connect = () => {
-      socket = new WebSocket(import.meta.env.VITE_WS_URL);
-      socket.onopen = () => {
-        console.log("WebSocket: ON");
-      };
-      socket.onclose = () => {
-        console.log("WebSocket: OFF");
-        reconnectTimeout = setTimeout(connect, 2000);
-      };
-      socket.onerror = (err) => {
-        console.error("WebSocket Error:", err);
-      };
-      socket.onmessage = (event) => {
-        console.log(event.data);
-      };
-    };
-
-    connect();
-
-    return () => {
-      if (reconnectTimeout) clearTimeout(reconnectTimeout);
-      if (socket) socket.close();
-    };
-  }, []);
+    const { delayData, packetData, throughputData, alerts } = useTelemetryData();
 
   return (
     <div
@@ -200,7 +171,7 @@ export default function Dashboard() {
                   minHeight: "200px",
                 }}
               >
-                <AlertsTable />
+                <AlertsTable alerts={alerts} />
               </div>
             </div>
           </div>
