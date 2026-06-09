@@ -8,9 +8,12 @@ import { AlertsTable } from "../components/Table/AlertsTable";
 import { BottomNav } from "../components/Layout/BottomNav";
 import { darkGlassCardStyle } from "../utils/constants";
 import { useTelemetryData } from "../hook/useTelemetryData";
+import { useMapEngine } from "../hook/useMapEngine";
 
 export default function Dashboard() {
-    const { delayData, packetData, throughputData, alerts } = useTelemetryData();
+  const { updateShip } = useMapEngine();
+  const { delayData, packetData, throughputData, alerts } =
+    useTelemetryData(updateShip);
 
   return (
     <div

@@ -1,8 +1,269 @@
+// import { useRef, useCallback } from "react";
+// import maplibregl from "maplibre-gl";
+// import { createShipMarker } from "../helpers/creatShip";
+// import { buildLabelHTML } from "../helpers/buildLabelHTML";
+
+// export interface ShipPosition {
+//   id: string;
+//   lng: number;
+//   lat: number;
+//   color: string;
+//   latency_ms: number;
+//   loss: number;
+// }
+
+// const SHIP_COLORS: Record<string, string> = {
+//   "SHIP-01": "#3B8BD4",
+//   "SHIP-02": "#10B981",
+//   "SHIP-03": "#A855F7",
+//   "SHIP-04": "#F59E0B",
+// };
+
+// // Initial positions for each ship on the map (Persian Gulf region)
+// const SHIP_INITIAL_POSITIONS: Record<string, [number, number]> = {
+//   "SHIP-01": [50.8503, 28.9784],
+//   "SHIP-02": [55.2708, 25.2048],
+//   "SHIP-03": [56.3261, 24.4539],
+//   "SHIP-04": [52.5136, 29.3117],
+// };
+
+// export function useMapEngine() {
+//   const mapRef = useRef<maplibregl.Map | null>(null);
+//   const markersRef = useRef<Record<string, maplibregl.Marker>>({});
+//   const shipPositionsRef = useRef<Record<string, [number, number]>>({
+//     ...SHIP_INITIAL_POSITIONS,
+//   });
+
+//   const initMap = useCallback((container: HTMLDivElement) => {
+//     const map = new maplibregl.Map({
+//       container,
+//       style: {
+//         version: 8,
+//         sources: {
+//           "satellite-tiles": {
+//             type: "raster",
+//             tiles: [
+//               "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+//             ],
+//             tileSize: 256,
+//             attribution: "Tiles © Esri",
+//           },
+//         },
+//         layers: [
+//           {
+//             id: "satellite-base",
+//             type: "raster",
+//             source: "satellite-tiles",
+//             minzoom: 0,
+//             maxzoom: 20,
+//             paint: { "raster-opacity": 0.7 },
+//           },
+//         ],
+//       },
+//       center: [53.688, 27.5],
+//       zoom: 5.2,
+//     });
+
+//     map.on("load", () => {
+//       // Grid lines
+//       map.addSource("grid-lines", {
+//         type: "geojson",
+//         data: {
+//           type: "FeatureCollection",
+//           features: [
+//             ...[25, 30, 35, 40].map((lat) => ({
+//               type: "Feature" as const,
+//               geometry: {
+//                 type: "LineString" as const,
+//                 coordinates: [
+//                   [40, lat],
+//                   [65, lat],
+//                 ],
+//               },
+//               properties: {},
+//             })),
+//             ...[45, 50, 55, 60].map((lng) => ({
+//               type: "Feature" as const,
+//               geometry: {
+//                 type: "LineString" as const,
+//                 coordinates: [
+//                   [lng, 20],
+//                   [lng, 45],
+//                 ],
+//               },
+//               properties: {},
+//             })),
+//           ],
+//         },
+//       });
+
+//       map.addLayer({
+//         id: "grid-lines-layer",
+//         type: "line",
+//         source: "grid-lines",
+//         paint: {
+//           "line-color": "rgba(255,255,255,0.10)",
+//           "line-width": 0.8,
+//           "line-dasharray": [2, 4],
+//         },
+//       });
+
+//       // Ship connection mesh source — updated dynamically
+//       map.addSource("ship-mesh", {
+//         type: "geojson",
+//         data: { type: "FeatureCollection", features: [] },
+//       });
+
+//       map.addLayer({
+//         id: "ship-mesh-layer",
+//         type: "line",
+//         source: "ship-mesh",
+//         paint: {
+//           "line-color": "#22d3ee",
+//           "line-width": 1,
+//           "line-dasharray": [3, 3],
+//           "line-opacity": 0.5,
+//         },
+//       });
+
+//       // Pulse ring source — one circle per ship
+//       map.addSource("ship-pulses", {
+//         type: "geojson",
+//         data: { type: "FeatureCollection", features: [] },
+//       });
+
+//       // Create initial markers for all 4 ships
+//       Object.entries(SHIP_INITIAL_POSITIONS).forEach(([shipId, coords]) => {
+//         const color = SHIP_COLORS[shipId] ?? "#ffffff";
+//         const marker = createShipMarker(shipId, color, 0, 0);
+//         marker.setLngLat(coords).addTo(map);
+//         markersRef.current[shipId] = marker;
+//       });
+
+//       // Draw initial mesh
+//       updateMesh(map, shipPositionsRef.current);
+//     });
+
+//     mapRef.current = map;
+//     return map;
+//   }, []);
+
+//   // Called from useTelemetryData whenever a new WS message arrives
+//   const updateShip = useCallback(
+//     (shipId: string, latency_ms: number, loss: number, distance_m: number) => {
+//       const map = mapRef.current;
+//       if (!map || !map.isStyleLoaded()) return;
+
+//       const color = SHIP_COLORS[shipId] ?? "#ffffff";
+//       const prev = shipPositionsRef.current[shipId] ?? [53.688, 27.5];
+//       const newPos: [number, number] = [
+//         prev[0] + (Math.random() - 0.5) * 0.02,
+//         prev[1] + (Math.random() - 0.5) * 0.02,
+//       ];
+//       shipPositionsRef.current[shipId] = newPos;
+
+//       const existing = markersRef.current[shipId];
+//       if (existing) {
+//         existing.setLngLat(newPos);
+
+//         const el = existing.getElement();
+
+//         // Update label
+//         const labelEl = el.querySelector(".ship-label") as HTMLElement | null;
+//         if (labelEl) {
+//           labelEl.innerHTML = buildLabelHTML(shipId, color, latency_ms, loss);
+//         }
+
+//         // Update status dot color inside the SVG
+//         const statusDot = el.querySelector(
+//           "circle:last-of-type",
+//         ) as SVGCircleElement | null;
+//         if (statusDot) {
+//           statusDot.setAttribute(
+//             "fill",
+//             latency_ms > 150
+//               ? "#ef4444"
+//               : latency_ms > 80
+//                 ? "#f59e0b"
+//                 : "#22d3ee",
+//           );
+//         }
+//       } else {
+//         const marker = createShipMarker(shipId, color, latency_ms, loss);
+//         marker.setLngLat(newPos).addTo(map);
+//         markersRef.current[shipId] = marker;
+//       }
+
+//       updateMesh(map, shipPositionsRef.current);
+//     },
+//     [],
+//   );
+
+//   return { initMap, mapRef, updateShip };
+// }
+
+// // ─── helpers ────────────────────────────────────────────────────────────────
+// function updateMesh(
+//   map: maplibregl.Map,
+//   positions: Record<string, [number, number]>,
+// ) {
+//   const source = map.getSource("ship-mesh") as
+//     | maplibregl.GeoJSONSource
+//     | undefined;
+//   if (!source) return;
+
+//   const ships = Object.values(positions);
+//   const features: GeoJSON.Feature[] = []; // Connect every ship to every other ship
+//   for (let i = 0; i < ships.length; i++) {
+//     for (let j = i + 1; j < ships.length; j++) {
+//       features.push({
+//         type: "Feature",
+//         geometry: {
+//           type: "LineString",
+//           coordinates: [ships[i], ships[j]],
+//         },
+//         properties: {},
+//       });
+//     }
+//   }
+
+//   source.setData({ type: "FeatureCollection", features });
+// }
+
 import { useRef, useCallback } from "react";
 import maplibregl from "maplibre-gl";
+import { createShipMarker } from "../helpers/creatShip";
+import { buildLabelHTML } from "../helpers/buildLabelHTML";
+
+export interface ShipPosition {
+  id: string;
+  lng: number;
+  lat: number;
+  color: string;
+  latency_ms: number;
+  loss: number;
+}
+
+const SHIP_COLORS: Record<string, string> = {
+  "SHIP-01": "#3B8BD4",
+  "SHIP-02": "#10B981",
+  "SHIP-03": "#A855F7",
+  "SHIP-04": "#F59E0B",
+};
+
+const SHIP_INITIAL_POSITIONS: Record<string, [number, number]> = {
+  "SHIP-01": [50.8503, 28.9784],
+  "SHIP-02": [55.2708, 25.2048],
+  "SHIP-03": [56.3261, 24.4539],
+  "SHIP-04": [52.5136, 29.3117],
+};
 
 export function useMapEngine() {
   const mapRef = useRef<maplibregl.Map | null>(null);
+  const markersRef = useRef<Record<string, maplibregl.Marker>>({});
+  const shipPositionsRef = useRef<Record<string, [number, number]>>({
+    ...SHIP_INITIAL_POSITIONS,
+  });
 
   const initMap = useCallback((container: HTMLDivElement) => {
     const map = new maplibregl.Map({
@@ -26,135 +287,42 @@ export function useMapEngine() {
             source: "satellite-tiles",
             minzoom: 0,
             maxzoom: 20,
-            paint: {
-              "raster-opacity": 0.7,
-            },
+            paint: { "raster-opacity": 0.7 },
           },
         ],
       },
-      center: [53.688, 32.4279], 
-      zoom: 4.8, 
+      center: [53.688, 27.5],
+      zoom: 5.2,
     });
 
     map.on("load", () => {
-      map.addSource("fleet-mesh", {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          features: [
-            {
-              type: "Feature",
-              geometry: {
-                type: "LineString",
-                coordinates: [
-                  [51.4204, 35.6944], // Tehran Hub
-                  [59.6159, 36.2972], // Mashhad Hub
-                  [51.666, 32.6546], // Isfahan Hub
-                  [48.5176, 34.7981], // Hamadan Hub
-                  [51.4204, 35.6944], // Loop back
-                ],
-              },
-            },
-          ],
-        },
-      });
-
-      map.addLayer({
-        id: "mesh-lines",
-        type: "line",
-        source: "fleet-mesh",
-        paint: {
-          "line-color": "#22d3ee",
-          "line-width": 1.5,
-          "line-dasharray": [3, 3],
-        },
-      });
-
       map.addSource("grid-lines", {
         type: "geojson",
         data: {
           type: "FeatureCollection",
           features: [
-            {
-              type: "Feature",
+            ...[25, 30, 35, 40].map((lat) => ({
+              type: "Feature" as const,
               geometry: {
-                type: "LineString",
+                type: "LineString" as const,
                 coordinates: [
-                  [40, 25.0],
-                  [65, 25.0],
+                  [40, lat],
+                  [65, lat],
                 ],
               },
-            },
-            {
-              type: "Feature",
+              properties: {},
+            })),
+            ...[45, 50, 55, 60].map((lng) => ({
+              type: "Feature" as const,
               geometry: {
-                type: "LineString",
+                type: "LineString" as const,
                 coordinates: [
-                  [40, 30.0],
-                  [65, 30.0],
+                  [lng, 20],
+                  [lng, 45],
                 ],
               },
-            },
-            {
-              type: "Feature",
-              geometry: {
-                type: "LineString",
-                coordinates: [
-                  [40, 35.0],
-                  [65, 35.0],
-                ],
-              },
-            },
-            {
-              type: "Feature",
-              geometry: {
-                type: "LineString",
-                coordinates: [
-                  [40, 40.0],
-                  [65, 40.0],
-                ],
-              },
-            },
-            {
-              type: "Feature",
-              geometry: {
-                type: "LineString",
-                coordinates: [
-                  [45.0, 20],
-                  [45.0, 45],
-                ],
-              },
-            },
-            {
-              type: "Feature",
-              geometry: {
-                type: "LineString",
-                coordinates: [
-                  [50.0, 20],
-                  [50.0, 45],
-                ],
-              },
-            },
-            {
-              type: "Feature",
-              geometry: {
-                type: "LineString",
-                coordinates: [
-                  [55.0, 20],
-                  [55.0, 45],
-                ],
-              },
-            },
-            {
-              type: "Feature",
-              geometry: {
-                type: "LineString",
-                coordinates: [
-                  [60.0, 20],
-                  [60.0, 45],
-                ],
-              },
-            },
+              properties: {},
+            })),
           ],
         },
       });
@@ -164,71 +332,118 @@ export function useMapEngine() {
         type: "line",
         source: "grid-lines",
         paint: {
-          "line-color": "rgba(255, 255, 255, 0.12)",
+          "line-color": "rgba(255,255,255,0.10)",
           "line-width": 0.8,
           "line-dasharray": [2, 4],
         },
       });
 
-      const hubs = [
-        {
-          name: "TEHRAN-HQ",
-          color: "#3B8BD4",
-          coords: [51.4204, 35.6944],
-          details: "35.69 N, 51.42 E",
-          icon: "🏛️", 
-        },
-        {
-          name: "MASHHAD-NODE",
-          color: "#10B981",
-          coords: [59.6159, 36.2972],
-          details: "36.29 N, 59.61 E",
-          icon: "📡",
-        },
-        {
-          name: "ISFAHAN-RELAY",
-          color: "#F59E0B",
-          coords: [51.666, 32.6546],
-          details: "32.65 N, 51.66 E",
-          icon: "🔄",
-        },
-      ];
-
-      hubs.forEach((hub) => {
-        const markerEl = document.createElement("div");
-        markerEl.style.display = "flex";
-        markerEl.style.flexDirection = "column";
-        markerEl.style.alignItems = "center";
-
-        const dot = document.createElement("div");
-        dot.style.width = "10px";
-        dot.style.height = "10px";
-        dot.style.backgroundColor = "#ffffff";
-        dot.style.border = `2px solid ${hub.color}`;
-        dot.style.borderRadius = "50%";
-        dot.style.boxShadow = `0 0 12px ${hub.color}`;
-
-        const label = document.createElement("div");
-        label.style.textAlign = "center";
-        label.style.color = "#fff";
-        label.style.fontSize = "10px";
-
-        label.style.textShadow = "0 1px 3px rgba(0,0,0,0.9)";
-        label.style.marginTop = "4px";
-        label.innerHTML = `<span style="color: ${hub.color}">${hub.name}</span><br/><span style="color: #cbd5e1; font-weight: 400; font-size: 9px;">${hub.details}</span>`;
-
-        markerEl.appendChild(dot);
-        markerEl.appendChild(label);
-
-        new maplibregl.Marker({ element: markerEl })
-          .setLngLat(hub.coords as [number, number])
-          .addTo(map);
+      map.addSource("ship-mesh", {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] },
       });
+
+      map.addLayer({
+        id: "ship-mesh-layer",
+        type: "line",
+        source: "ship-mesh",
+        paint: {
+          "line-color": "#22d3ee",
+          "line-width": 1,
+          "line-dasharray": [3, 3],
+          "line-opacity": 0.5,
+        },
+      });
+
+      map.addSource("ship-pulses", {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] },
+      });
+
+      Object.entries(SHIP_INITIAL_POSITIONS).forEach(([shipId, coords]) => {
+        const color = SHIP_COLORS[shipId] ?? "#ffffff";
+        const marker = createShipMarker(shipId, color, 0, 0);
+        marker.setLngLat(coords).addTo(map);
+        markersRef.current[shipId] = marker;
+      });
+
+      updateMesh(map, shipPositionsRef.current);
     });
 
     mapRef.current = map;
     return map;
   }, []);
 
-  return { initMap, mapRef };
+  const updateShip = useCallback(
+    (shipId: string, latency_ms: number, loss: number, distance_m: number) => {
+      const map = mapRef.current;
+      if (!map || !map.isStyleLoaded()) return;
+
+      const color = SHIP_COLORS[shipId] ?? "#ffffff";
+      const fixedPos = SHIP_INITIAL_POSITIONS[shipId] ?? [53.688, 27.5];
+      shipPositionsRef.current[shipId] = fixedPos;
+
+      const existing = markersRef.current[shipId];
+      if (existing) {
+        existing.setLngLat(fixedPos);
+
+        const el = existing.getElement();
+
+        const labelEl = el.querySelector(".ship-label") as HTMLElement | null;
+        if (labelEl) {
+          labelEl.innerHTML = buildLabelHTML(shipId, color, latency_ms, loss);
+        }
+
+        const statusDot = el.querySelector(
+          "circle:last-of-type",
+        ) as SVGCircleElement | null;
+        if (statusDot) {
+          statusDot.setAttribute(
+            "fill",
+            latency_ms > 150
+              ? "#ef4444"
+              : latency_ms > 80
+                ? "#f59e0b"
+                : "#22d3ee",
+          );
+        }
+      } else {
+        const marker = createShipMarker(shipId, color, latency_ms, loss);
+        marker.setLngLat(fixedPos).addTo(map);
+        markersRef.current[shipId] = marker;
+      }
+
+      updateMesh(map, shipPositionsRef.current);
+    },
+    [],
+  );
+
+  return { initMap, mapRef, updateShip };
+}
+
+function updateMesh(
+  map: maplibregl.Map,
+  positions: Record<string, [number, number]>,
+) {
+  const source = map.getSource("ship-mesh") as
+    | maplibregl.GeoJSONSource
+    | undefined;
+  if (!source) return;
+
+  const ships = Object.values(positions);
+  const features: GeoJSON.Feature[] = [];
+  for (let i = 0; i < ships.length; i++) {
+    for (let j = i + 1; j < ships.length; j++) {
+      features.push({
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [ships[i], ships[j]],
+        },
+        properties: {},
+      });
+    }
+  }
+
+  source.setData({ type: "FeatureCollection", features });
 }

@@ -36,7 +36,14 @@ function normalizeShipId(raw: string): string {
   return key;
 }
 
-export function useTelemetryData() {
+export function useTelemetryData(
+  updateShip?: (
+    shipId: string,
+    latency_ms: number,
+    loss: number,
+    distance_m: number,
+  ) => void,
+) {
   const [delayData, setDelayData] = useState<any[]>(generateInitialHistory());
   const [packetData, setPacketData] = useState([
     { name: "SHIP-01", loss: 0 },
@@ -56,109 +63,111 @@ export function useTelemetryData() {
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMountedRef = useRef(true);
 
-  const handleMessage = useCallback((event: MessageEvent) => {
-    try {
-      let rawText: string;
-      if (event.data instanceof ArrayBuffer) {
-        rawText = new TextDecoder("utf-8").decode(event.data);
-      } else {
-        rawText = event.data as string;
-      }
-
-      console.log("WS payload:", rawText);
-
-      const msg: WebSocketMessage = JSON.parse(rawText);
-      const sourceKey = normalizeShipId(msg.source_ship);
-      const timeLabel = `T+${msg.time.toFixed(0)}s`;
-
-      setDelayData((prev) => {
-        const newPoint: Record<string, any> = {
-          time: timeLabel,
-          "SHIP-01": prev[prev.length - 1]?.["SHIP-01"] ?? null,
-          "SHIP-02": prev[prev.length - 1]?.["SHIP-02"] ?? null,
-          "SHIP-03": prev[prev.length - 1]?.["SHIP-03"] ?? null,
-          "SHIP-04": prev[prev.length - 1]?.["SHIP-04"] ?? null,
-          [sourceKey]: +msg.latency_ms.toFixed(2),
-        };
-
-        const idx = prev.findIndex((d) => d.time === timeLabel);
-        if (idx > -1) {
-          const updated = [...prev];
-          updated[idx] = {
-            ...updated[idx],
-            [sourceKey]: +msg.latency_ms.toFixed(2),
-          };
-          return updated;
+  const handleMessage = useCallback(
+    (event: MessageEvent) => {
+      try {
+        let rawText: string;
+        if (event.data instanceof ArrayBuffer) {
+          rawText = new TextDecoder("utf-8").decode(event.data);
+        } else {
+          rawText = event.data as string;
         }
 
-        const next = [...prev, newPoint];
-        if (next.length > 15) next.shift();
-        return next;
-      });
+        const msg: WebSocketMessage = JSON.parse(rawText);
+        const sourceKey = normalizeShipId(msg.source_ship);
+        const timeLabel = `T+${msg.time.toFixed(0)}s`;
 
-      setPacketData((prev) =>
-        prev.map((item) =>
-          item.name === sourceKey
-            ? { ...item, loss: +(msg.shadow_loss_ratio * 100).toFixed(1) }
-            : item,
-        ),
-      );
-
-      setThroughputData((prev) => {
-        const mbps =
-          msg.latency_ms > 0
-            ?  (msg.latency_ms )
-            : 0;
-        return prev.map((item) =>
-          item.id === sourceKey
-            ? { ...item, value: +Math.min(mbps, 100).toFixed(1) }
-            : item,
+        // 1. Update map marker
+        updateShip?.(
+          sourceKey,
+          msg.latency_ms,
+          msg.shadow_loss_ratio * 100,
+          msg.distance_m,
         );
-      });
 
-      if (msg.shadow_packet_lost || msg.latency_ms > 100) {
-        setAlerts((prev) => {
-          const newAlert = {
-            id: Date.now().toString(),
-            type: msg.shadow_packet_lost ? "Packet Dropped" : "High Latency",
-            target: `${msg.source_ship}->${msg.destination_ship}`,
-            severity: msg.shadow_packet_lost ? "CRITICAL" : "WARNING",
-            timestamp: new Date().toLocaleTimeString(),
+        // 2. Delay chart
+        setDelayData((prev) => {
+          const newPoint: Record<string, any> = {
+            time: timeLabel,
+            "SHIP-01": prev[prev.length - 1]?.["SHIP-01"] ?? null,
+            "SHIP-02": prev[prev.length - 1]?.["SHIP-02"] ?? null,
+            "SHIP-03": prev[prev.length - 1]?.["SHIP-03"] ?? null,
+            "SHIP-04": prev[prev.length - 1]?.["SHIP-04"] ?? null,
+            [sourceKey]: +msg.latency_ms.toFixed(2),
           };
-          const next = [newAlert, ...prev];
-          if (next.length > 20) next.pop();
+          const idx = prev.findIndex((d) => d.time === timeLabel);
+          if (idx > -1) {
+            const updated = [...prev];
+            updated[idx] = {
+              ...updated[idx],
+              [sourceKey]: +msg.latency_ms.toFixed(2),
+            };
+            return updated;
+          }
+          const next = [...prev, newPoint];
+          if (next.length > 15) next.shift();
           return next;
         });
+
+        // 3. Packet loss
+        setPacketData((prev) =>
+          prev.map((item) =>
+            item.name === sourceKey
+              ? { ...item, loss: +(msg.shadow_loss_ratio * 100).toFixed(1) }
+              : item,
+          ),
+        );
+
+        // 4. Throughput
+        setThroughputData((prev) =>
+          prev.map((item) =>
+            item.id === sourceKey
+              ? { ...item, value: +Math.min(msg.latency_ms, 100).toFixed(1) }
+              : item,
+          ),
+        );
+
+        // 5. Alerts
+        if (msg.shadow_packet_lost || msg.latency_ms > 100) {
+          setAlerts((prev) => {
+            const newAlert = {
+              id: Date.now().toString(),
+              type: msg.shadow_packet_lost ? "Packet Dropped" : "High Latency",
+              target: `${msg.source_ship}->${msg.destination_ship}`,
+              severity: msg.shadow_packet_lost ? "CRITICAL" : "WARNING",
+              timestamp: new Date().toLocaleTimeString(),
+            };
+            const next = [newAlert, ...prev];
+            if (next.length > 20) next.pop();
+            return next;
+          });
+        }
+      } catch (err) {
+        console.error("WS parse error:", err);
       }
-    } catch (err) {
-      console.error("WS parse error:", err);
-    }
-  }, []);
+    },
+    [updateShip],
+  );
 
   useEffect(() => {
     isMountedRef.current = true;
 
     function connect() {
       if (!isMountedRef.current) return;
-
       if (
         socketRef.current &&
         (socketRef.current.readyState === WebSocket.OPEN ||
           socketRef.current.readyState === WebSocket.CONNECTING)
-      ) {
-        console.log("WS already open, skipping reconnect");
+      )
         return;
-      }
 
       const ws = new WebSocket(import.meta.env.VITE_WS_URL as string);
       ws.binaryType = "arraybuffer";
       socketRef.current = ws;
-
       ws.onopen = () => console.log("WS: connected");
       ws.onmessage = handleMessage;
       ws.onerror = (e) => console.error("WS error:", e);
       ws.onclose = () => {
-        console.log("WS: closed");
         if (isMountedRef.current) {
           reconnectTimerRef.current = setTimeout(connect, 2000);
         }
@@ -170,7 +179,6 @@ export function useTelemetryData() {
     return () => {
       isMountedRef.current = false;
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
-
       const ws = socketRef.current;
       if (ws) {
         ws.onclose = null;

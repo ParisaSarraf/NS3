@@ -8,15 +8,12 @@ export function MapCanvas() {
 
   useEffect(() => {
     if (!containerRef.current) return;
-
     const mapInstance = initMap(containerRef.current);
-
     const resizeTimeout = setTimeout(() => {
       if (mapRef.current) {
         mapRef.current.resize();
       }
     }, 100);
-
     return () => {
       clearTimeout(resizeTimeout);
       mapInstance.remove();
