@@ -23,7 +23,6 @@ export function useMapManager() {
   const hiddenIdsRef = useRef<string[]>([]);
 
   const BaseURL = import.meta.env.VITE_API_URL_BACKEND;
-  console.log("BaseURL:", BaseURL);
 
   useEffect(() => {
     modeRef.current = mode;
@@ -132,7 +131,12 @@ export function useMapManager() {
   };
 
   const handleFinalSave = useCallback(async () => {
-    if (!pendingGeom) return;
+    console.log("pendingGeom:", pendingGeom);
+
+    if (!pendingGeom) {
+      console.log("pendingGeom is null");
+      return;
+    }
 
     const finalLabel =
       labelInput.trim() ||
@@ -145,7 +149,7 @@ export function useMapManager() {
       } بدون نام`;
 
     try {
-      await fetch(`${BaseURL}/api/features`, {
+      const response = await fetch(`${BaseURL}/api/features`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -154,6 +158,12 @@ export function useMapManager() {
           geom: JSON.stringify(pendingGeom.geomData),
         }),
       });
+
+      console.log(await response.text());
+
+      if (!response.ok) {
+        throw new Error("Save failed");
+      }
 
       setShowLabelDialog(false);
       setPendingGeom(null);
