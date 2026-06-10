@@ -1,0 +1,71 @@
+:root {
+  --phosphor-green: #4cff6a;
+  --alert-red: #ff4c4c;
+  --hud-bg: rgba(10, 25, 10, 0.85);
+  --grid-line: rgba(76, 255, 106, 0.2);
+}
+
+.radar-tab-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #0a1a0a 0%, #000 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.radar-tab-wrapper::after {
+  content: " ";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.radar-container {
+  position: relative;
+  width: 80vmin;
+  height: 80vmin;
+  background: var(--hud-bg);
+  border: 1px solid var(--phosphor-green);
+  border-radius: 50%;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(76, 255, 106, 0.2);
+  border: 2px solid var(--phosphor-green);
+}
+
+.radar-sweep {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(
+    from 0deg,
+    rgba(76, 255, 106, 0.4) 0deg,
+    rgba(76, 255, 106, 0.1) 60deg,
+    transparent 90deg
+  );
+  animation: sweep 4s linear infinite;
+  z-index: 2;
+}
+
+.marker {
+  position: absolute;
+  color: var(--phosphor-green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  text-shadow: 0 0 5px var(--phosphor-green);
+  font-weight: bold;
+}
+
+.marker::before {
+  content: '>'; 
+  margin-right: 5px;
+}
+
+.n { top: 10px; left: 50%; transform: translateX(-50%); }
+.e { right: 10px; top: 50%; transform: translateY(-50%); }
+.s { bottom: 10px; left: 50%; transform: translateX(-50%); }
+.w { left: 10px; top: 50%; transform: translateY(-50%); }
