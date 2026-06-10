@@ -27,6 +27,7 @@ export function Toolbar({ mode, handleModeChange, saveGeometry }: ToolbarProps) 
         display: "flex",
         alignItems: "center",
         gap: 10,
+        fontFamily: "Vazirmatn",
         zIndex: 10,
         padding: "12px 18px",
         borderRadius: "24px",
@@ -76,7 +77,7 @@ export function Toolbar({ mode, handleModeChange, saveGeometry }: ToolbarProps) 
             cursor: "pointer",
             fontWeight: "600",
             fontSize: "14px",
-            fontFamily: "inherit",
+            fontFamily: "Vazirmatn",
             boxShadow: "0 0 15px rgba(16, 185, 129, 0.3)",
           }}
         >

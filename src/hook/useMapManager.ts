@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import maplibregl from "maplibre-gl";
-import type { Feature, GeometryData, Mode, PendingGeometry } from "../utils/types";
+import type {
+  Feature,
+  GeometryData,
+  Mode,
+  PendingGeometry,
+} from "../utils/types";
 
 export function useMapManager() {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -16,6 +21,9 @@ export function useMapManager() {
   const drawPoints = useRef<[number, number][]>([]);
   const drawMarkers = useRef<maplibregl.Marker[]>([]);
   const hiddenIdsRef = useRef<string[]>([]);
+
+  const BaseURL = import.meta.env.VITE_API_URL_BACKEND;
+  console.log("BaseURL:", BaseURL);
 
   useEffect(() => {
     modeRef.current = mode;
@@ -33,13 +41,13 @@ export function useMapManager() {
 
   const refreshData = useCallback(async () => {
     try {
-      const res = await fetch("/api/features");
+      const res = await fetch(`${BaseURL}/api/features`);
       const data: Feature[] = await res.json();
       setFeatures(data);
 
       if (mapRef.current && mapRef.current.getSource("features")) {
         const visibleFeatures = data.filter(
-          (f) => !hiddenIdsRef.current.includes(f.id)
+          (f) => !hiddenIdsRef.current.includes(f.id),
         );
         const geojson: GeoJSON.FeatureCollection = {
           type: "FeatureCollection",
@@ -56,13 +64,11 @@ export function useMapManager() {
     } catch (err) {
       console.error("Failed to refresh data:", err);
     }
-  }, []); 
+  }, []);
 
   useEffect(() => {
     if (mapRef.current && mapRef.current.getSource("features")) {
-      const visibleFeatures = features.filter(
-        (f) => !hiddenIds.includes(f.id)
-      );
+      const visibleFeatures = features.filter((f) => !hiddenIds.includes(f.id));
       const geojson: GeoJSON.FeatureCollection = {
         type: "FeatureCollection",
         features: visibleFeatures.map((f) => ({
@@ -80,7 +86,7 @@ export function useMapManager() {
   const deleteFeature = useCallback(
     async (id: string) => {
       try {
-        await fetch("/api/features", {
+        await fetch(`${BaseURL}/api/features`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id }),
@@ -92,12 +98,12 @@ export function useMapManager() {
         console.error(err);
       }
     },
-    [refreshData]
+    [refreshData],
   );
 
   const toggleVisibility = useCallback((id: string) => {
     setHiddenIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   }, []);
 
@@ -134,12 +140,12 @@ export function useMapManager() {
         pendingGeom.type === "point"
           ? "نقطه"
           : pendingGeom.type === "line"
-          ? "خط"
-          : "محدوده"
+            ? "خط"
+            : "محدوده"
       } بدون نام`;
 
     try {
-      await fetch("/api/features", {
+      await fetch(`${BaseURL}/api/features`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -167,7 +173,7 @@ export function useMapManager() {
         "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.js",
         (error: Error | null) => {
           if (error) console.error(error);
-        }
+        },
       );
     }
 
@@ -279,14 +285,14 @@ export function useMapManager() {
     });
 
     return () => map.remove();
-  }, [deleteFeature, refreshData]); 
+  }, [deleteFeature, refreshData]);
 
   const handleModeChange = useCallback(
     (newMode: Mode) => {
       resetDrawState();
       setMode((prev: Mode) => (prev === newMode ? null : newMode));
     },
-    [resetDrawState]
+    [resetDrawState],
   );
 
   return {

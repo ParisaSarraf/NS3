@@ -25,6 +25,7 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
         flexDirection: "column",
         borderRadius: "28px",
         overflow: "hidden",
+        fontFamily: "Vazirmatn",
       }}
     >
       <div
@@ -34,10 +35,10 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
           background: "rgba(0, 0, 0, 0.1)",
         }}
       >
-        <h3 style={{ margin: 0, fontSize: "17px", fontWeight: "600", color: "#f8fafc" }}>
+        <h3 style={{ margin: 0, fontSize: "17px", fontWeight: "600", color: "#f8fafc", fontFamily: "Vazirmatn" }}>
           مدیریت لایه‌ها
         </h3>
-        <span style={{ fontSize: "12px", color: "#64748b", marginTop: "4px", display: "block" }}>
+        <span style={{ fontSize: "12px", color: "#64748b", marginTop: "4px", display: "block", fontFamily: "Vazirmatn" }}>
           {features.length} عارضه روی نقشه
         </span>
       </div>
@@ -54,7 +55,7 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
         }}
       >
         {features.length === 0 && (
-          <div style={{ textAlign: "center", color: "#475569", marginTop: 40, fontSize: "14px" }}>
+          <div style={{ textAlign: "center", color: "#475569", marginTop: 40, fontSize: "14px", fontFamily: "Vazirmatn" }}>
             لیست لایه‌ها خالی است.
           </div>
         )}
@@ -82,6 +83,7 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
                   color: "#e2e8f0",
                   fontSize: "13px",
                   fontWeight: "500",
+                  fontFamily: "Vazirmatn",
                 }}
               >
                 {f.type === "point" && "🔵 "}
@@ -94,6 +96,7 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
                 <button
                   onClick={() => toggleVisibility(f.id)}
                   style={{
+                    fontFamily: "Vazirmatn",
                     background: "rgba(255,255,255,0.03)",
                     border: "1px solid rgba(255,255,255,0.05)",
                     borderRadius: "10px",
@@ -116,6 +119,7 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
                     color: "#f87171",
                     fontSize: "14px",
                     padding: "6px 10px",
+                    fontFamily: "Vazirmatn",
                   }}
                 >
                   🗑

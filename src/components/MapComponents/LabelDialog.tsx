@@ -22,6 +22,7 @@ export function LabelDialog({ labelInput, setLabelInput, onCancel, onConfirm }: 
         alignItems: "center",
         justifyContent: "center",
         zIndex: 100,
+        fontFamily: "Vazirmatn",
       }}
     >
       <div
@@ -33,6 +34,7 @@ export function LabelDialog({ labelInput, setLabelInput, onCancel, onConfirm }: 
           display: "flex",
           flexDirection: "column",
           gap: "16px",
+          fontFamily: "Vazirmatn",
         }}
       >
         <h3 style={{ margin: 0, color: "#fff", fontSize: "16px" }}>
