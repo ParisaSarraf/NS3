@@ -294,44 +294,50 @@ export default function Mission() {
   }, [started, godView, selectedGroupType, selectedCommunicationRadius]);
 
   const allObjects = useMemo(() => {
-    const canonicalMissiles: CanonicalObject[] = missiles.map((m: any) => {
-      const id = String(m.id);
-      const newPos = {
-        x: m.location?.pixi?.x ?? 0,
-        y: m.location?.pixi?.y ?? 0,
-      };
 
-      // مقداردهی اولیه تاریخچه مسیر برای شناسه جدید
-      if (!missileTrailsRef.current[id]) {
-        missileTrailsRef.current[id] = [];
-      }
+const canonicalMissiles: CanonicalObject[] = useMemo(() => {
+  const currentIds = new Set(missiles.map((m: any) => String(m.id)));
 
-      const currentTrail = missileTrailsRef.current[id];
+  // پاکسازی trail های موشک‌های منقضی
+  Object.keys(missileTrailsRef.current).forEach((id) => {
+    if (!currentIds.has(id)) {
+      delete missileTrailsRef.current[id];
+    }
+  });
 
-      // ثبت نقطه جدید در صورت تغییر مختصات
-      if (
-        currentTrail.length === 0 ||
-        currentTrail[currentTrail.length - 1].x !== newPos.x ||
-        currentTrail[currentTrail.length - 1].y !== newPos.y
-      ) {
-        currentTrail.push(newPos);
-      }
+  return missiles.map((m: any) => {
+    const id = String(m.id);
+    const newPos = {
+      x: m.location?.pixi?.x ?? 0,
+      y: m.location?.pixi?.y ?? 0,
+    };
 
-      return {
-        id,
-        type: "Missile", // استفاده از تایپ دقیق برای شناسایی در سیستم رندرینگ
-        party: "friend", // اختصاص جناح پیش‌فرض برای موشک‌ها
-        ...newPos,
-        trail: [...currentTrail], // ارسال کپی تاریخچه مسیر برای رسم خط‌چین
-        geo: {
-          lat: m.location?.geo?.lat ?? 0,
-          lon: m.location?.geo?.lon ?? 0,
-        },
-        phase: null,
-        target: null,
-        targets: [],
-      };
-    });
+    if (!missileTrailsRef.current[id]) {
+      missileTrailsRef.current[id] = [];
+    }
+
+    const currentTrail = missileTrailsRef.current[id];
+    const last = currentTrail[currentTrail.length - 1];
+    if (!last || last.x !== newPos.x || last.y !== newPos.y) {
+      currentTrail.push(newPos);
+    }
+
+    return {
+      id,
+      type: "Missile",
+      party: "friend",
+      ...newPos,
+      trail: [...currentTrail],
+      geo: {
+        lat: m.location?.geo?.lat ?? 0,
+        lon: m.location?.geo?.lon ?? 0,
+      },
+      phase: null,
+      target: null,
+      targets: [],
+    };
+  });
+}, [missiles]);
 
     // ۲. منطق مشاهده کل (God View)
     if (godView) {

@@ -56,8 +56,9 @@ export const scenarioApi = {
     worldPos: { x: number; y: number; z: number };
     customId: string;
   }) => {
+    const baseWithoutApi = BASEURL.replace(/\/api\/?$/, "");
     return myAxios.post(
-      `${BASEURL.replace(/"api"/, "")}/put/${encodeURIComponent(data.customId)}`,
+      `${baseWithoutApi}/put/${encodeURIComponent(data.customId)}`,
       {
         type: data.type,
         party: data.party,

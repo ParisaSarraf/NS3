@@ -56,19 +56,48 @@ export const usePixiManager = (
   /* ------------------------------------------
       TARGET MARKER (SPRITE VERSION)
   ------------------------------------------ */
+  // useEffect(() => {
+  //   const app = appRef.current;
+  //   if (!app || !props.started || !texturesRef.current?.target) return;
+
+  //   if (!targetSpriteRef.current) {
+  //     const sprite = new PIXI.Sprite(texturesRef.current.target);
+  //     sprite.anchor.set(0.5);
+  //     sprite.zIndex = 9999;
+  //     targetSpriteRef.current = sprite;
+  //     app.stage.addChild(sprite);
+  //   }
+
+  //   const sprite = targetSpriteRef.current;
+
+  //   if (props.selectedLocation && props.activeTab === "moveAttack") {
+  //     const pixiPos = worldToMap(
+  //       props.selectedLocation.x,
+  //       props.selectedLocation.y,
+  //       app.screen.width,
+  //       app.screen.height,
+  //     );
+  //     sprite.x = pixiPos.x;
+  //     sprite.y = pixiPos.y;
+  //     sprite.visible = true;
+  //   } else {
+  //     sprite.visible = false;
+  //   }
+  // }, [props.selectedLocation, props.activeTab]);
+
+  // ✅ کد اصلاح‌شده
   useEffect(() => {
     const app = appRef.current;
     if (!app || !props.started || !texturesRef.current?.target) return;
 
-    if (!targetSpriteRef.current) {
-      const sprite = new PIXI.Sprite(texturesRef.current.target);
+    let sprite = targetSpriteRef.current;
+    if (!sprite) {
+      sprite = new PIXI.Sprite(texturesRef.current.target);
       sprite.anchor.set(0.5);
       sprite.zIndex = 9999;
       targetSpriteRef.current = sprite;
       app.stage.addChild(sprite);
     }
-
-    const sprite = targetSpriteRef.current;
 
     if (props.selectedLocation && props.activeTab === "moveAttack") {
       const pixiPos = worldToMap(
@@ -83,7 +112,13 @@ export const usePixiManager = (
     } else {
       sprite.visible = false;
     }
-  }, [props.selectedLocation, props.activeTab]);
+
+    return () => {
+      if (targetSpriteRef.current) {
+        targetSpriteRef.current.visible = false;
+      }
+    };
+  }, [props.selectedLocation, props.activeTab, props.started]);
 
   /* ------------------------------------------
       DRAW MAP + OBJECTS + WAYPOINTS
@@ -170,9 +205,9 @@ export const usePixiManager = (
 
       // --- RADAR RANGES ---
       const radar = new PIXI.Graphics();
-      // radar.interactive = false; 
-      radar.eventMode = "none"; 
-      radar.zIndex = 0; 
+      // radar.interactive = false;
+      radar.eventMode = "none";
+      radar.zIndex = 0;
       radar.lineStyle(2, colors.glow, isSelected ? 0.6 : 0.25);
       radar.beginFill(colors.glow, isSelected ? 0.05 : 0.02);
       const radarRange =
@@ -188,9 +223,9 @@ export const usePixiManager = (
       // --- COMMUNICATION RANGES ---
       if (props.activeTab === "moveAttack") {
         const comm = new PIXI.Graphics();
-        // comm.interactive = false; 
-        comm.eventMode = "none"; 
-        comm.zIndex = 1; 
+        // comm.interactive = false;
+        comm.eventMode = "none";
+        comm.zIndex = 1;
         comm.lineStyle(2, 0x4cff6a, isSelected ? 0.75 : 0.45);
         comm.beginFill(0x4cff6a, isSelected ? 0.04 : 0.015);
         const commPx =
