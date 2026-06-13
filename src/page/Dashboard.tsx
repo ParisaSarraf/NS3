@@ -7,20 +7,22 @@ import Mission from "./Mission";
 
 export default function Dashboard() {
   return (
-    <div style={{
-      display: "flex",
-      backgroundColor: "#060913",
-      height: "100vh",
-      width: "100vw",
-      color: "#fff",
-      overflow: "hidden",
-      fontFamily: "JetBrains Mono, monospace",
-    }}>
+    <div
+      style={{
+        display: "flex",
+        backgroundColor: "#060913",
+        height: "100vh",
+        width: "100vw",
+        color: "#fff",
+        overflow: "hidden",
+        fontFamily: "JetBrains Mono, monospace",
+      }}
+    >
       <LeftSidebar />
       <Routes>
-        <Route path="/NS3"     element={<NetworkSystemThree />} />
-        <Route path="/Map"     element={<Map />} />
-        <Route path="/Lidar"   element={<Lidar />} />
+        <Route path="/NS3" element={<NetworkSystemThree />} />
+        <Route path="/Map" element={<Map />} />
+        <Route path="/Lidar" element={<Lidar />} />
         <Route path="/mission" element={<Mission />} />
       </Routes>
     </div>

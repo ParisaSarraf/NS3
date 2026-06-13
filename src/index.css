@@ -39,8 +39,8 @@ body {
 /* :root {
   font-family: "Inter", "Segoe UI", system-ui, sans-serif;
   color: #f5fbff;
-  background-color: #050910;
-} */
+  /* background-color: #050910; */
+/* } */
 
 /* *,
 *::before,
@@ -52,7 +52,7 @@ body {
   margin: 0;
   min-height: 100vh;
   height: 100vh;
-  background:  url("/military_texture.jpg") center/cover fixed no-repeat;
+  background: #010403 url("/military_texture.jpg") center/cover fixed no-repeat;
   color: #f5fbff;
   -webkit-font-smoothing: antialiased;
   position: relative;
@@ -74,6 +74,7 @@ body {
 }  */
 
 .startup-screen {
+  background: #010403 url("/military_texture.jpg") center/cover fixed no-repeat;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -958,7 +959,6 @@ body {
   margin: 0;
 }
 
-/* ظرف اصلی سایدبار که حالا به دراور تبدیل شده */
 .map-sidebar-drawer {
   position: absolute;
   top: 70px;
@@ -970,12 +970,10 @@ body {
   pointer-events: auto;
 }
 
-/* وقتی کلاس open به آن اضافه می‌شود */
 .map-sidebar-drawer.open {
-  transform: translateX(-414px); /* سایدبار را به داخل می‌کشد */
+  transform: translateX(-414px); 
 }
 
-/* استایل دکمه باز و بسته کردن (Drawer Toggle) */
 .drawer-toggle-btn {
   border: 1px solid rgba(122, 213, 255, 0.4);
   background: rgba(14, 63, 108, 0.72);
