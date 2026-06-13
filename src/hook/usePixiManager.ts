@@ -28,7 +28,7 @@ export const usePixiManager = (
 
     const app = new PIXI.Application({
       backgroundColor: 0x0a0a0a,
-      resizeTo: containerRef.current,
+      resizeTo: containerRef.current!,
       antialias: true,
       resolution: window.devicePixelRatio || 1,
       autoDensity: true,
@@ -115,7 +115,8 @@ export const usePixiManager = (
     const bg = new PIXI.Sprite(mapTexture);
     bg.width = width;
     bg.height = height;
-    bg.interactive = true;
+    // bg.interactive = true;
+    bg.eventMode = "static";
     bg.on("pointerdown", (e) => {
       const world = mapToWorld(e.data.global.x, e.data.global.y, width, height);
       props.onMapClick(world);
@@ -169,9 +170,9 @@ export const usePixiManager = (
 
       // --- RADAR RANGES ---
       const radar = new PIXI.Graphics();
-      radar.interactive = false; // ← ADD
-      radar.eventMode = "none"; // ← ADD
-      radar.zIndex = 0; // ← ADD
+      // radar.interactive = false; 
+      radar.eventMode = "none"; 
+      radar.zIndex = 0; 
       radar.lineStyle(2, colors.glow, isSelected ? 0.6 : 0.25);
       radar.beginFill(colors.glow, isSelected ? 0.05 : 0.02);
       const radarRange =
@@ -187,9 +188,9 @@ export const usePixiManager = (
       // --- COMMUNICATION RANGES ---
       if (props.activeTab === "moveAttack") {
         const comm = new PIXI.Graphics();
-        comm.interactive = false; // ← ADD
-        comm.eventMode = "none"; // ← ADD
-        comm.zIndex = 1; // ← ADD
+        // comm.interactive = false; 
+        comm.eventMode = "none"; 
+        comm.zIndex = 1; 
         comm.lineStyle(2, 0x4cff6a, isSelected ? 0.75 : 0.45);
         comm.beginFill(0x4cff6a, isSelected ? 0.04 : 0.015);
         const commPx =
@@ -215,8 +216,9 @@ export const usePixiManager = (
       ship.anchor.set(0.5);
       ship.scale.set(scaleX * 1.2);
       ship.position.set(px, py);
-      ship.zIndex = 10; // ← ADD  (always above all circles)
-      ship.interactive = true;
+      ship.zIndex = 10;
+      // ship.interactive = true;
+      ship.eventMode = "static";
       ship.cursor = "pointer";
       ship.on("pointerover", () => props.onHoverObject(obj));
       ship.on("pointerout", () => props.onHoverObject(null));
@@ -244,7 +246,8 @@ export const usePixiManager = (
         enemyMarker.scale.set(scaleX);
         enemyMarker.position.set(tPos.x, tPos.y);
         enemyMarker.zIndex = 10; // ← ADD  (always above all circles)
-        enemyMarker.interactive = true;
+        // enemyMarker.interactive = true;
+        enemyMarker.eventMode = "static";
         enemyMarker.on("pointerdown", (e) => {
           e.stopPropagation();
           if (t.id) props.onSelectEnemy(t.id);

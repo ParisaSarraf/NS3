@@ -41,6 +41,7 @@ export function useMapManager() {
   const refreshData = useCallback(async () => {
     try {
       const res = await fetch(`${BaseURL}/api/features`);
+      
       const data: Feature[] = await res.json();
       setFeatures(data);
 
@@ -131,8 +132,6 @@ export function useMapManager() {
   };
 
   const handleFinalSave = useCallback(async () => {
-    console.log("pendingGeom:", pendingGeom);
-
     if (!pendingGeom) {
       console.log("pendingGeom is null");
       return;
@@ -158,8 +157,6 @@ export function useMapManager() {
           geom: JSON.stringify(pendingGeom.geomData),
         }),
       });
-
-      console.log(await response.text());
 
       if (!response.ok) {
         throw new Error("Save failed");

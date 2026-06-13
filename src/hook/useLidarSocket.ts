@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 
-const WS_URL = "ws://172.2.16.226:3001/ue";
+const WS_URL = import.meta.env.WS_URL;
 const RECONNECT_DELAY = 2000;
 
 function parseAndNormalize(raw: string[]): THREE.Vector3[] {
@@ -70,15 +70,18 @@ export function useLidarSocket() {
         const parsed = parseAndNormalize(data.Point_Cloud);
         setPoints(parsed);
       } catch {
-        // پیام بد — نادیده بگیر
+        console.error("Error parsing message:", event.data);
+        setStatus("error");
       }
     };
 
-    ws.onerror = () => {
+    ws.onerror = (event) => {
+      console.error("WebSocket error:", event);
       setStatus("error");
     };
 
-    ws.onclose = () => {
+    ws.onclose = (event) => {
+      console.log("WebSocket closed:", event);
       setStatus("disconnected");
       wsRef.current = null;
       if (shouldConnect.current) {

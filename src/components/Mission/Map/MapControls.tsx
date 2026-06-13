@@ -31,14 +31,14 @@ const MapControls: React.FC<MapControlsProps> = ({
   setSelectedRadarObject,
   selectedRadarObject,
 }) => {
-  const radarMin = Number(window._env_?.APP_RADAR_RANGE_MINIMUM ?? 10000);
-  const radarMax = Number(window._env_?.APP_RADAR_RANGE_MAXIMUM ?? 400000);
+  const radarMin = Number(import.meta.env.VITE_APP_RADAR_RANGE_MINIMUM ?? 10000);
+  const radarMax = Number(import.meta.env.VITE_APP_RADAR_RANGE_MAXIMUM ?? 400000);
 
   const commMin = Number(
-    window._env_?.APP_COMMUNICATION_RANGE_MINIMUM ?? 10000,
+    import.meta.env.VITE_APP_COMMUNICATION_RANGE_MINIMUM ?? 10000,
   );
   const commMax = Number(
-    window._env_?.APP_COMMUNICATION_RANGE_MAXIMUM ?? 400000,
+    import.meta.env.VITE_APP_COMMUNICATION_RANGE_MAXIMUM ?? 400000,
   );
 
   return (

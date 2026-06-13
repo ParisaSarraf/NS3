@@ -19,7 +19,7 @@ const StartupScreen: React.FC<StartupScreenProps> = ({
             alt="SARI Command Insignia"
             className="startup-logo"
           />
-          <h1>{window._env_?.APP_TITLE }</h1>
+          <h1>{import.meta.env.VITE_APP_TITLE  }</h1>
         </div>
 
         <p className="startup-copy">

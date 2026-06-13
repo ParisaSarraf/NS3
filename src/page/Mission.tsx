@@ -61,10 +61,10 @@ export default function Mission() {
   });
 
   const [selectedRadius, setSelectedRadius] = useState<number>(
-    window._env_?.APP_RADAR_RANGE,
+    import.meta.env.VITE_APP_RADAR_RANGE,
   );
   const [selectedCommunicationRadius, setSelectedCommunicationRadius] =
-    useState<number>(window._env_?.APP_COMMUNICATION_RANGE);
+    useState<number>(import.meta.env.VITE_APP_COMMUNICATION_RANGE);
 
   const [activeTab, setActiveTab] = useState<
     "initialize" | "moveAttack" | "radar" | "wayPoint"
@@ -608,10 +608,6 @@ export default function Mission() {
       });
     }
   };
-
-  useEffect(() => {
-    console.log("WAYPOINTS:", wayPoints);
-  }, [wayPoints]);
 
   if (!started) {
     return (

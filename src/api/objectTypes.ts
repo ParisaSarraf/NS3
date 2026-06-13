@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { scenarioApi } from "./scenarioApi";
+
+
 // export const BASEURL = window._env_.API_URL;
-export const BASEURL = "http://localhost:3000";
+export const BASEURL = import.meta.env.VITE_API_URL;
 
 export const useGetAllObjectTypes = () => {
   return useQuery({
