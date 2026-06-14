@@ -56,48 +56,19 @@ export const usePixiManager = (
   /* ------------------------------------------
       TARGET MARKER (SPRITE VERSION)
   ------------------------------------------ */
-  // useEffect(() => {
-  //   const app = appRef.current;
-  //   if (!app || !props.started || !texturesRef.current?.target) return;
-
-  //   if (!targetSpriteRef.current) {
-  //     const sprite = new PIXI.Sprite(texturesRef.current.target);
-  //     sprite.anchor.set(0.5);
-  //     sprite.zIndex = 9999;
-  //     targetSpriteRef.current = sprite;
-  //     app.stage.addChild(sprite);
-  //   }
-
-  //   const sprite = targetSpriteRef.current;
-
-  //   if (props.selectedLocation && props.activeTab === "moveAttack") {
-  //     const pixiPos = worldToMap(
-  //       props.selectedLocation.x,
-  //       props.selectedLocation.y,
-  //       app.screen.width,
-  //       app.screen.height,
-  //     );
-  //     sprite.x = pixiPos.x;
-  //     sprite.y = pixiPos.y;
-  //     sprite.visible = true;
-  //   } else {
-  //     sprite.visible = false;
-  //   }
-  // }, [props.selectedLocation, props.activeTab]);
-
-  // ✅ کد اصلاح‌شده
   useEffect(() => {
     const app = appRef.current;
     if (!app || !props.started || !texturesRef.current?.target) return;
 
-    let sprite = targetSpriteRef.current;
-    if (!sprite) {
-      sprite = new PIXI.Sprite(texturesRef.current.target);
+    if (!targetSpriteRef.current) {
+      const sprite = new PIXI.Sprite(texturesRef.current.target);
       sprite.anchor.set(0.5);
       sprite.zIndex = 9999;
       targetSpriteRef.current = sprite;
       app.stage.addChild(sprite);
     }
+
+    const sprite = targetSpriteRef.current;
 
     if (props.selectedLocation && props.activeTab === "moveAttack") {
       const pixiPos = worldToMap(
@@ -112,13 +83,42 @@ export const usePixiManager = (
     } else {
       sprite.visible = false;
     }
+  }, [props.selectedLocation, props.activeTab]);
 
-    return () => {
-      if (targetSpriteRef.current) {
-        targetSpriteRef.current.visible = false;
-      }
-    };
-  }, [props.selectedLocation, props.activeTab, props.started]);
+  // // ✅ کد اصلاح‌شده
+  // useEffect(() => {
+  //   const app = appRef.current;
+  //   if (!app || !props.started || !texturesRef.current?.target) return;
+
+  //   let sprite = targetSpriteRef.current;
+  //   if (!sprite) {
+  //     sprite = new PIXI.Sprite(texturesRef.current.target);
+  //     sprite.anchor.set(0.5);
+  //     sprite.zIndex = 9999;
+  //     targetSpriteRef.current = sprite;
+  //     app.stage.addChild(sprite);
+  //   }
+
+  //   if (props.selectedLocation && props.activeTab === "moveAttack") {
+  //     const pixiPos = worldToMap(
+  //       props.selectedLocation.x,
+  //       props.selectedLocation.y,
+  //       app.screen.width,
+  //       app.screen.height,
+  //     );
+  //     sprite.x = pixiPos.x;
+  //     sprite.y = pixiPos.y;
+  //     sprite.visible = true;
+  //   } else {
+  //     sprite.visible = false;
+  //   }
+
+  //   return () => {
+  //     if (targetSpriteRef.current) {
+  //       targetSpriteRef.current.visible = false;
+  //     }
+  //   };
+  // }, [props.selectedLocation, props.activeTab, props.started]);
 
   /* ------------------------------------------
       DRAW MAP + OBJECTS + WAYPOINTS

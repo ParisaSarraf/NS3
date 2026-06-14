@@ -293,52 +293,54 @@ export default function Mission() {
     };
   }, [started, godView, selectedGroupType, selectedCommunicationRadius]);
 
+  // محاسبه‌ی موشک‌های کانونیکال + پاکسازی trail های منقضی
+  // (این بخش قبلاً به‌اشتباه به‌صورت یک useMemo داخل useMemo دیگر نوشته شده بود
+  // که باعث نقض Rules of Hooks و خطاهای "hook order changed" می‌شد)
+  const canonicalMissiles = useMemo<CanonicalObject[]>(() => {
+    const currentIds = new Set(missiles.map((m: any) => String(m.id)));
+
+    // پاکسازی trail های موشک‌های منقضی
+    Object.keys(missileTrailsRef.current).forEach((id) => {
+      if (!currentIds.has(id)) {
+        delete missileTrailsRef.current[id];
+      }
+    });
+
+    return missiles.map((m: any) => {
+      const id = String(m.id);
+      const newPos = {
+        x: m.location?.pixi?.x ?? 0,
+        y: m.location?.pixi?.y ?? 0,
+      };
+
+      if (!missileTrailsRef.current[id]) {
+        missileTrailsRef.current[id] = [];
+      }
+
+      const currentTrail = missileTrailsRef.current[id];
+      const last = currentTrail[currentTrail.length - 1];
+      if (!last || last.x !== newPos.x || last.y !== newPos.y) {
+        currentTrail.push(newPos);
+      }
+
+      return {
+        id,
+        type: "Missile",
+        party: "friend",
+        ...newPos,
+        trail: [...currentTrail],
+        geo: {
+          lat: m.location?.geo?.lat ?? 0,
+          lon: m.location?.geo?.lon ?? 0,
+        },
+        phase: null,
+        target: null,
+        targets: [],
+      };
+    });
+  }, [missiles]);
+
   const allObjects = useMemo(() => {
-
-const canonicalMissiles: CanonicalObject[] = useMemo(() => {
-  const currentIds = new Set(missiles.map((m: any) => String(m.id)));
-
-  // پاکسازی trail های موشک‌های منقضی
-  Object.keys(missileTrailsRef.current).forEach((id) => {
-    if (!currentIds.has(id)) {
-      delete missileTrailsRef.current[id];
-    }
-  });
-
-  return missiles.map((m: any) => {
-    const id = String(m.id);
-    const newPos = {
-      x: m.location?.pixi?.x ?? 0,
-      y: m.location?.pixi?.y ?? 0,
-    };
-
-    if (!missileTrailsRef.current[id]) {
-      missileTrailsRef.current[id] = [];
-    }
-
-    const currentTrail = missileTrailsRef.current[id];
-    const last = currentTrail[currentTrail.length - 1];
-    if (!last || last.x !== newPos.x || last.y !== newPos.y) {
-      currentTrail.push(newPos);
-    }
-
-    return {
-      id,
-      type: "Missile",
-      party: "friend",
-      ...newPos,
-      trail: [...currentTrail],
-      geo: {
-        lat: m.location?.geo?.lat ?? 0,
-        lon: m.location?.geo?.lon ?? 0,
-      },
-      phase: null,
-      target: null,
-      targets: [],
-    };
-  });
-}, [missiles]);
-
     // ۲. منطق مشاهده کل (God View)
     if (godView) {
       const envObjects = environmentContacts.map(toCanonical);
@@ -424,7 +426,7 @@ const canonicalMissiles: CanonicalObject[] = useMemo(() => {
     return Array.from(mergedById.values());
   }, [
     environmentContacts,
-    missiles,
+    canonicalMissiles,
     godView,
     filters,
     selectedGroupId,
