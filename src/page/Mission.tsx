@@ -63,6 +63,7 @@ export default function Mission() {
   const [selectedRadius, setSelectedRadius] = useState<number>(
     import.meta.env.VITE_APP_RADAR_RANGE,
   );
+  
   const [selectedCommunicationRadius, setSelectedCommunicationRadius] =
     useState<number>(import.meta.env.VITE_APP_COMMUNICATION_RANGE);
 

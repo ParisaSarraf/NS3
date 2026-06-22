@@ -1,10 +1,12 @@
 import {
+  Gamepad,
   Map,
   Network,
   Radar,
   Target,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 export function LeftSidebar() {
   const navigate = useNavigate();
 
@@ -13,6 +15,7 @@ export function LeftSidebar() {
     { icon: Map, label: "Map", to: "/Map" },
     { icon: Radar, label: "LiDar", to: "/lidar" },
     { icon: Target, label: "Mission", to: "/mission" },
+    { icon: Gamepad, label: "Creation", to: "/creation" },
   ];
 
   return (

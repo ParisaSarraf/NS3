@@ -4,6 +4,7 @@ import NetworkSystemThree from "./NetworkSystemThree";
 import Map from "./Map";
 import Lidar from "./Lidar";
 import Mission from "./Mission";
+import Creation from "./Creation";
 
 export default function Dashboard() {
   return (
@@ -24,7 +25,10 @@ export default function Dashboard() {
         <Route path="/Map" element={<Map />} />
         <Route path="/Lidar" element={<Lidar />} />
         <Route path="/mission" element={<Mission />} />
+        <Route path="/creation" element={<Creation />} />
       </Routes>
     </div>
   );
 }
+
+
