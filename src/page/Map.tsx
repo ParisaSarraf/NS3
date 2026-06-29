@@ -28,6 +28,7 @@ const Map = () => {
         width: "100vw",
         height: "100vh",
         direction: "rtl",
+        fontFamily: "Vazirmatn",
       }}
     >
       <div

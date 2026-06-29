@@ -1,8 +1,6 @@
 import { darkGlassStyle } from "../../style/styles";
 import type { Feature } from "../../utils/types";
 
-
-
 interface LayerManagerProps {
   features: Feature[];
   hiddenIds: string[];
@@ -25,7 +23,6 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
         flexDirection: "column",
         borderRadius: "28px",
         overflow: "hidden",
-        fontFamily: "Vazirmatn",
       }}
     >
       <div
@@ -35,10 +32,10 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
           background: "rgba(0, 0, 0, 0.1)",
         }}
       >
-        <h3 style={{ margin: 0, fontSize: "17px", fontWeight: "600", color: "#f8fafc", fontFamily: "Vazirmatn" }}>
+        <h3 style={{ margin: 0, fontSize: "17px", fontWeight: "600", color: "#f8fafc" }}>
           مدیریت لایه‌ها
         </h3>
-        <span style={{ fontSize: "12px", color: "#64748b", marginTop: "4px", display: "block", fontFamily: "Vazirmatn" }}>
+        <span style={{ fontSize: "12px", color: "#64748b", marginTop: "4px", display: "block" }}>
           {features.length} عارضه روی نقشه
         </span>
       </div>
@@ -55,7 +52,7 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
         }}
       >
         {features.length === 0 && (
-          <div style={{ textAlign: "center", color: "#475569", marginTop: 40, fontSize: "14px", fontFamily: "Vazirmatn" }}>
+          <div style={{ textAlign: "center", color: "#475569", marginTop: 40, fontSize: "14px"}}>
             لیست لایه‌ها خالی است.
           </div>
         )}
@@ -83,7 +80,6 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
                   color: "#e2e8f0",
                   fontSize: "13px",
                   fontWeight: "500",
-                  fontFamily: "Vazirmatn",
                 }}
               >
                 {f.type === "point" && "🔵 "}
@@ -119,7 +115,6 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
                     color: "#f87171",
                     fontSize: "14px",
                     padding: "6px 10px",
-                    fontFamily: "Vazirmatn",
                   }}
                 >
                   🗑
