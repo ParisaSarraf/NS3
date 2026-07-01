@@ -96,7 +96,6 @@ export default function Lidar() {
           border: "1px solid rgba(255, 255, 255, 0.1)",
           borderRadius: "12px",
           padding: "16px 20px",
-          fontFamily: "system-ui, -apple-system, sans-serif",
           boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
         }}
       >
@@ -127,7 +126,7 @@ export default function Lidar() {
                 status === "connecting" ? "pulse 1.5s infinite" : "none",
             }}
           />
-          <span style={{ color: "#e2e8f0", fontSize: "14px", fontWeight: 500 }}>
+          <span style={{ color: "#e2e8f0", fontSize: "14px", fontWeight: 500  }}>
             {status === "connected"
               ? "متصل"
               : status === "connecting"

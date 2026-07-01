@@ -1,15 +1,31 @@
+
 import "../style/creation.css";
+import SidebarLeft from "../components/Creation/layout/SidebarLeft";
+// import VesselAssembly from "../components/Creation/dashboard/VesselAssembly";
+// import SidebarRight from "../components/Creation/layout/SidebarRight";
+// import BottomPanel from "../components/Creation/layout/BottomPanel";
 
 const Creation = () => {
   return (
-    <div className="container">
-      <div className="grid">
-        <div className="glass">
-          <div className="test">مدیریت federate ها</div>
-        </div>
-        <div className="glass">2</div>
-        <div className="glass">3</div>
-        <div className="glass">4</div>
+    <div className="dashboard-container dark-theme">
+      <div className="dashboard-grid">
+        <aside className="sidebar-left">
+          <SidebarLeft />
+        </aside>
+{/*         
+        <main className="main-content">
+          <div className="workspace glass-panel">
+            <VesselAssembly />
+          </div>
+        </main>
+        
+        <aside className="sidebar-right glass-panel">
+          <SidebarRight />
+        </aside>
+        
+        <footer className="bottom-panel">
+          <BottomPanel />
+        </footer> */}
       </div>
     </div>
   );
