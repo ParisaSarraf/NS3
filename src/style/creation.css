@@ -1,6 +1,7 @@
 .container {
   width: 100%;
   height: 100%;
+  
 }
 
 .container > * + * {
@@ -60,6 +61,7 @@ body {
       rgba(16, 185, 129, 0.05) 0%,
       transparent 40%
     );
+
 }
 
 .dashboard-container {
@@ -85,48 +87,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.search-bar input {
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
-  padding: 8px 16px;
-  border-radius: 20px;
-  width: 300px;
-  backdrop-filter: blur(4px);
-}
-
-.search-bar input:focus {
-  outline: none;
-  border-color: var(--accent-blue);
-  background: rgba(15, 23, 42, 0.8);
-}
-
-.user-controls {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.icon-btn {
-  background: none;
-  border: none;
-  color: var(--text-main);
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: transform 0.2s;
-}
-
-/* .icon-btn:hover {
-  transform: scale(1.1);
-} */
 
 .dashboard-grid {
   display: grid;
