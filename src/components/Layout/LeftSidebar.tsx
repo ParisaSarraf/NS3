@@ -1,12 +1,29 @@
 import { Gamepad, LogOut, Map, Network, Radar, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-interface LeftSidebarProps {
+import { useMutation } from "@tanstack/react-query";
+import { logout } from "../../services/authService";
+interface LeftSidebarProps 
+{
   onLogout: () => void;
 }
 
-export function LeftSidebar({ onLogout }: LeftSidebarProps) {
+export function LeftSidebar({ onLogout }: LeftSidebarProps)
+ {
   const navigate = useNavigate();
+
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => 
+      {
+      onLogout(); 
+      navigate("/login", { replace: true });
+    },
+    onError: () => 
+      {
+      onLogout();
+      navigate("/login", { replace: true });
+    },
+  });
 
   const items = [
     { icon: Network, label: "NS3", to: "/NS3" },
@@ -31,7 +48,6 @@ export function LeftSidebar({ onLogout }: LeftSidebarProps) {
         justifyContent: "space-between",
       }}
     >
-      {}
       <div
         style={{
           display: "flex",
@@ -62,22 +78,24 @@ export function LeftSidebar({ onLogout }: LeftSidebarProps) {
         ))}
       </div>
 
-      {}
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           gap: "4px",
-          cursor: "pointer",
-          color: "#ef4444",
+          cursor: logoutMutation.isPending ? "not-allowed" : "pointer",
+          color: logoutMutation.isPending ? "#999" : "#ef4444",
+          opacity: logoutMutation.isPending ? 0.5 : 1,
           paddingBottom: "10px",
         }}
-        onClick={onLogout}
-        title="خروج از حساب"
+        onClick={() => logoutMutation.mutate()}
+        title="Log Out"
       >
         <LogOut style={{ fontSize: 20 }} />
-        <span style={{ fontSize: "12px" }}>خروج</span>
+        <span style={{ fontSize: "12px", fontWeight: "800" }}>
+          {logoutMutation.isPending ? "..." : "Output"}
+        </span>
       </div>
     </div>
   );

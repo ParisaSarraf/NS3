@@ -3,25 +3,22 @@ import { useState } from "react";
 import { useLogin } from "../../../hook/useLogin";
 import "../../../style/login.css";
 
-interface LoginForm
- {
+
+interface LoginForm {
   username: string;
   password: string;
 }
 
-interface LoginProps 
-{
+interface LoginProps {
   onLoginSuccess: () => void;
 }
 
-export default function Login({ onLoginSuccess }: LoginProps) 
-{
-  const [showPass, setShowPass]=useState<boolean>(false);
+export default function Login({ onLoginSuccess }: LoginProps) {
+  const [showPass, setShowPass] = useState<boolean>(false);
 
-  const loginMutation=useLogin({ onLoginSuccess });
+  const loginMutation = useLogin({ onLoginSuccess });
 
-  const 
-  {
+  const {
     register,
     handleSubmit,
     formState: { errors },
@@ -29,8 +26,7 @@ export default function Login({ onLoginSuccess }: LoginProps)
     mode: "onBlur",
   });
 
-  const onSubmit = (data: LoginForm): void => 
-    {
+  const onSubmit = (data: LoginForm): void => {
     loginMutation.mutate({
       username: data.username,
       password: data.password,
@@ -40,28 +36,27 @@ export default function Login({ onLoginSuccess }: LoginProps)
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-        <h1 className="auth-title">ورود به حساب</h1>
-        <p className="auth-subtitle">اطلاعات خود را وارد کنید</p>
+        <h1 className="auth-title">Sign In</h1>
+        <p className="auth-subtitle">Enter your credentials to continue</p>
 
         {loginMutation.isError && (
           <div className="auth-alert">
-            {loginMutation.error?.message || "خطا در ورود به سیستم"}
+            {loginMutation.error?.message || "Login failed. Please try again."}
           </div>
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className={`field-group ${errors.username ? "has-error" : ""}`}>
-            <label>نام کاربری</label>
+            <label>Username</label>
             <div className="input-wrapper">
               <span className="input-icon">
                 <img src="/images/envelope.png" alt="envelope" />
               </span>
               <input
                 type="text"
-                placeholder="نام کاربری را وارد کنید"
-                dir="rtl"
+                placeholder="Enter your username"
                 {...register("username", {
-                  required: "نام کاربری الزامی است",
+                  required: "Username is required",
                 })}
               />
             </div>
@@ -71,19 +66,19 @@ export default function Login({ onLoginSuccess }: LoginProps)
           </div>
 
           <div className={`field-group ${errors.password ? "has-error" : ""}`}>
-            <label>رمز عبور</label>
+            <label>Password</label>
             <div className="input-wrapper">
               <span className="input-icon">
-                <img src="/images/595586.png" alt="Lock" />
+                <img src="/public/images/595586.png" alt="Lock" />
               </span>
               <input
                 type={showPass ? "text" : "password"}
-                placeholder="رمز عبور را وارد کنید"
+                placeholder="Enter your password"
                 {...register("password", {
-                  required: "رمز عبور الزامی است",
+                  required: "Password is required",
                   minLength: {
                     value: 5,
-                    message: "رمز عبور حداقل 5 کاراکتر باشد",
+                    message: "Password must be at least 5 characters",
                   },
                 })}
               />
@@ -91,11 +86,11 @@ export default function Login({ onLoginSuccess }: LoginProps)
                 type="button"
                 className="toggle-pass"
                 onClick={() => setShowPass(!showPass)}
-                aria-label="نمایش/مخفی رمز عبور"
+                aria-label="Toggle password visibility"
               >
                 <img
-                  src={showPass ? "/images/eyeClose.png" : "/images/eye.png"}
-                  alt={showPass ? "مخفی کردن" : "نمایش"}
+                  src={showPass ? "/public/images/eyeClose.png" : "/public/images/eye.png"}
+                  alt={showPass ? "Hide" : "Show"}
                 />
               </button>
             </div>
@@ -110,9 +105,9 @@ export default function Login({ onLoginSuccess }: LoginProps)
             disabled={loginMutation.isPending}
           >
             {loginMutation.isPending ? (
-              <span className="spinner" aria-label="در حال ورود..." />
+              <span className="spinner" aria-label="Signing in..." />
             ) : (
-              "ورود"
+              "Sign In"
             )}
           </button>
         </form>

@@ -11,10 +11,27 @@ export default defineConfig({
       '/auth': {
         target: 'http://172.22.16.94:1998',
         changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req) => 
+            {
+            const auth = req.headers['authorization']
+            if (auth) {
+              proxyReq.setHeader('Authorization', auth)
+            }
+          })
+        },
       },
       '/components': {
         target: 'http://172.22.16.94:1998',
         changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req) => {
+            const auth = req.headers['authorization']
+            if (auth) {
+              proxyReq.setHeader('Authorization', auth)
+            }
+          })
+        },
       }
     }
   }

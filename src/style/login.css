@@ -7,11 +7,11 @@
   padding: 0;
 }
 
-body 
+/* body 
 {
   font-family: "Vazirmatn", sans-serif;
   direction: rtl;
-}
+} */
 .btn-logout {
   width: 100%;
   margin-top: 12px;
@@ -133,9 +133,8 @@ body
 
 .input-icon 
 {
-  padding: 0 12px;
-  font-size: 36px;
-  opacity: 0.5;
+  padding: 0 10px;
+  font-size: 27px;
 }
 
 .input-wrapper input 
@@ -145,9 +144,9 @@ body
   border: none;
   outline: none;
   color: #1a202c;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 500;
-  padding: 12px 4px;
+  padding: 12px 10px;
   font-family: "Vazirmatn", sans-serif;
 }
 
@@ -175,7 +174,7 @@ body
 .error-msg  
 {
   color: red;
-  font-size: 15px;
+  font-size:14px;
   margin-top: 5px;
   display: block;
 }
