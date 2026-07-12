@@ -1,0 +1,71 @@
+.startup-screen {
+  background: var(--c-bg-black-green) url("/military_texture.jpg") center/cover fixed no-repeat;
+  min-height: 100vh;
+  min-width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.startup-card {
+  max-width: 520px;
+  width: min(100%, 520px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: clamp(32px, 6vw, 56px);
+}
+
+.startup-logo {
+  width: clamp(110px, 18vw, 160px);
+  margin: 0 auto 8px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.42);
+}
+
+.startup-copy {
+  margin: 0;
+  color: rgba(245, 251, 255, 0.75);
+  line-height: 1.6;
+}
+
+.startup-error {
+  margin: 0;
+  color: var(--c-pink-soft);
+  font-weight: 600;
+}
+
+.startup-button {
+  border: none;
+  border-radius: 999px;
+  padding: 16px 32px;
+  background: linear-gradient(120deg, var(--c-blue), #00d4ff);
+  color: var(--c-bg-navy-dark);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.startup-button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  box-shadow: none;
+}
+
+.startup-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px var(--blue-a45);
+}

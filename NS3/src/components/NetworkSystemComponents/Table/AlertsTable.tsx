@@ -1,0 +1,145 @@
+import { CYBER_THEME } from "../../../utils/constants";
+
+interface AlertLog {
+  id: string;
+  type: string;
+  target: string;
+  severity: "CRITICAL" | "WARNING" | "INFO";
+  timestamp: string;
+}
+
+export function AlertsTable({ alerts }: { alerts: AlertLog[] }) {
+  const getSeverityStyle = (severity: AlertLog["severity"]) => {
+    switch (severity) {
+      case "CRITICAL":
+        return {
+          color: "#ef4444",
+          background: CYBER_THEME.severityColors.CRITICAL,
+          border: "1px solid rgba(239, 68, 68, 0.4)",
+        };
+      case "WARNING":
+        return {
+          color: "#f59e0b",
+          background: CYBER_THEME.severityColors.WARNING,
+          border: "1px solid rgba(245, 158, 11, 0.4)",
+        };
+      case "INFO":
+        return {
+          color: "#3b82f6",
+          background: CYBER_THEME.severityColors.INFO,
+          border: "1px solid rgba(59, 130, 246, 0.4)",
+        };
+    }
+  };
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        width: "100%",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "12px",
+        }}
+      >
+        <h3
+          style={{
+            margin: 0,
+            fontSize: "14px",
+            color: "#94a3b8",
+            fontWeight: "600",
+          }}
+        >
+          ALERTS LOG SYSTEM
+        </h3>
+      </div>
+      <div
+        style={{ height: "1px", backgroundColor: "#1e293b", margin: "5px 0" }}
+      ></div>
+
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+          maxHeight: "220px",
+        }}
+        className="custom-scroll"
+      >
+        {alerts.length === 0 ? (
+          <div
+            style={{
+              color: "#64748b",
+              fontSize: "11px",
+              textAlign: "center",
+              padding: "20px",
+            }}
+          >
+            No active alerts recorded
+          </div>
+        ) : (
+          alerts.map((alert) => (
+            <div
+              key={alert.id}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "2fr 1.2fr 1fr 0.8fr",
+                alignItems: "center",
+                padding: "10px 14px",
+                background: "rgba(255, 255, 255, 0.02)",
+                border: "1px solid rgba(255, 255, 255, 0.04)",
+                borderRadius: "10px",
+                fontSize: "11px",
+              }}
+            >
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <span style={{ fontSize: "16px" }}>
+                  {alert.severity === "CRITICAL"
+                    ? "❌"
+                    : alert.severity === "WARNING"
+                      ? "⚠️"
+                      : "ℹ️"}
+                </span>
+                <span style={{ color: "#e2e8f0", fontWeight: "500" }}>
+                  {alert.type}
+                </span>
+              </div>
+
+              <span style={{ color: "#94a3b8" }}>{alert.target}</span>
+
+              <div style={{ display: "flex" }}>
+                <span
+                  style={{
+                    ...getSeverityStyle(alert.severity),
+                    fontSize: "10px",
+                    fontWeight: "700",
+                    padding: "2px 8px",
+                    borderRadius: "4px",
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  {alert.severity}
+                </span>
+              </div>
+
+              <span style={{ color: "#64748b", textAlign: "right" }}>
+                {alert.timestamp}
+              </span>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
