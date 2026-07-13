@@ -5,8 +5,9 @@ import NetworkSystemThree from "./page/NetworkSystemThree";
 import Map from "./page/Map";
 import Lidar from "./page/Lidar";
 import Mission from "./page/Mission";
-import Creation from "./page/Creation";
+import Creation from "./page/FleetTwin";
 import Login from "./components/Layout/Login/Login";
+import FleetTwin from "./page/FleetTwin";
 
 function App() {
   const [isLogin, setIsLogin] = useState<boolean>(
@@ -49,7 +50,7 @@ function App() {
               <Route path="/Map" element={<Map />} />
               <Route path="/Lidar" element={<Lidar />} />
               <Route path="/mission" element={<Mission />} />
-              <Route path="/creation" element={<Creation />} />
+              <Route path="/fleetTwin" element={<FleetTwin />} />
               <Route path="*" element={<Navigate to="/NS3" replace />} />
             </>
           )}

@@ -1,11 +1,11 @@
 import "../style/creation.css";
-import CreationHeader from "../components/Creation/layout/CreationHeader";
-import SidebarLeft from "../components/Creation/layout/SidebarLeft";
-import VesselAssembly from "../components/Creation/dashboard/VesselAssembly";
-import SidebarRight from "../components/Creation/layout/SidebarRight";
-import BottomPanel from "../components/Creation/layout/BottomPanel";
+import CreationHeader from "../components/FleetTwin/layout/CreationHeader";
+import SidebarLeft from "../components/FleetTwin/layout/SidebarLeft";
+import VesselAssembly from "../components/FleetTwin/dashboard/VesselAssembly";
+import SidebarRight from "../components/FleetTwin/layout/SidebarRight";
+import BottomPanel from "../components/FleetTwin/layout/BottomPanel";
 
-const Creation = () => {
+const FleetTwin = () => {
   return (
     <div className="dashboard-container dark-theme">
       <CreationHeader />
@@ -32,4 +32,4 @@ const Creation = () => {
   );
 };
 
-export default Creation;
+export default FleetTwin;
