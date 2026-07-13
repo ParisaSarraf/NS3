@@ -5,7 +5,7 @@ import VesselAssembly from "../components/Creation/dashboard/VesselAssembly";
 import SidebarRight from "../components/Creation/layout/SidebarRight";
 import BottomPanel from "../components/Creation/layout/BottomPanel";
 
-const Creation = () => {
+const FleetTwin = () => {
   return (
     <div className="dashboard-container dark-theme">
       <CreationHeader />
@@ -32,4 +32,4 @@ const Creation = () => {
   );
 };
 
-export default Creation;
+export default FleetTwin;
