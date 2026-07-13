@@ -30,7 +30,7 @@ export function LeftSidebar({ onLogout }: LeftSidebarProps)
     { icon: Map, label: "Map", to: "/Map" },
     { icon: Radar, label: "LiDar", to: "/lidar" },
     { icon: Target, label: "Mission", to: "/mission" },
-    { icon: Gamepad, label: "Creation", to: "/creation" },
+    { icon: Gamepad, label: "FleetTwin", to: "/FleetTwin" },
   ];
 
   return (
