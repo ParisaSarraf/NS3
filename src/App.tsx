@@ -49,7 +49,7 @@ function App() {
               <Route path="/Map" element={<Map />} />
               <Route path="/Lidar" element={<Lidar />} />
               <Route path="/mission" element={<Mission />} />
-              <Route path="/creation" element={<Creation />} />
+              <Route path="/FleetTwin" element={<Creation />} />
               <Route path="*" element={<Navigate to="/NS3" replace />} />
             </>
           )}
