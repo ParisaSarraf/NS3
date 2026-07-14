@@ -32,7 +32,7 @@ const leftModules = [
     icon: <Waves size={16} />,
     name: "Sonar",
     sub: "Hull + Towed Array",
-    status: "ok",
+    status: "دخفخن",
   },
   {
     id: "cms",
