@@ -21,7 +21,11 @@ function Cloud({ points }: { points: THREE.Vector3[] }) {
     for (let i = 0; i < len; i++) {
       const p = points[i];
 
+<<<<<<< HEAD
       // تبدیل محور LiDAR به Three.js
+=======
+      // Convert LiDAR axes to Three.js
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
       positions[i * 3] = p.x;
       positions[i * 3 + 1] = p.z;
       positions[i * 3 + 2] = -p.y;
@@ -86,7 +90,11 @@ export default function Lidar() {
       {/* Satus Bar */}
       <div
         style={{
+<<<<<<< HEAD
           direction: "rtl",
+=======
+          direction: "ltr",
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
           position: "absolute",
           top: 24,
           right: 24,
@@ -128,10 +136,17 @@ export default function Lidar() {
           />
           <span style={{ color: "#e2e8f0", fontSize: "14px", fontWeight: 500  }}>
             {status === "connected"
+<<<<<<< HEAD
               ? "متصل"
               : status === "connecting"
                 ? "در حال اتصال..."
                 : "قطع اتصال"}
+=======
+              ? "Connected"
+              : status === "connecting"
+                ? "Connecting..."
+                : "Disconnected"}
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
           </span>
         </div>
         <div
@@ -141,7 +156,11 @@ export default function Lidar() {
             justifyContent: "space-between",
           }}
         >
+<<<<<<< HEAD
           <span style={{ color: "#94a3b8", fontSize: "13px" }}>تعداد نقاط</span>
+=======
+          <span style={{ color: "#94a3b8", fontSize: "13px" }}>Point count</span>
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
           <span
             style={{
               color: "#38bdf8",

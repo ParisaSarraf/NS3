@@ -42,7 +42,11 @@ const SimpleContextMenu: React.FC<Props> = ({
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 9999 }}>
+<<<<<<< HEAD
       {/* لایه شفاف برای بستن منو با کلیک بیرون */}
+=======
+      {/* Transparent layer to close the menu on outside click */}
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
       <div style={{ position: "absolute", inset: 0 }} onClick={resetAndClose} />
 
       <div
@@ -56,7 +60,11 @@ const SimpleContextMenu: React.FC<Props> = ({
           pointerEvents: "auto",
         }}
       >
+<<<<<<< HEAD
         {/* مرحله اول: انتخاب جناح */}
+=======
+        {/* Step one: select a faction */}
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
         {step === "party" && (
           <>
             <div className="menu-header">

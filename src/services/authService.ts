@@ -38,6 +38,7 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 401) 
         {
+<<<<<<< HEAD
         throw new Error('نام کاربری یا رمز عبور اشتباه است');
       }
       if (!error.response) {
@@ -45,6 +46,15 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
       }
     }
     throw new Error('خطا در ورود به سیستم');
+=======
+        throw new Error('Invalid username or password');
+      }
+      if (!error.response) {
+        throw new Error('Network error - please check your connection');
+      }
+    }
+    throw new Error('Login failed');
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   }
 };
 
@@ -54,7 +64,11 @@ export const logout = async (): Promise<void> =>
 
   if (!token) 
     {
+<<<<<<< HEAD
     throw new Error('توکن یافت نشد');
+=======
+    throw new Error('Token not found');
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   }
 
   try {
@@ -70,9 +84,16 @@ export const logout = async (): Promise<void> =>
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 401) {
+<<<<<<< HEAD
         throw new Error('احراز هویت نامعتبر است');
       }
     }
     throw new Error('خطا در خروج از سیستم');
+=======
+        throw new Error('Invalid authentication');
+      }
+    }
+    throw new Error('Logout failed');
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   }
 };

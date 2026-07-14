@@ -10,10 +10,17 @@ interface ToolbarProps {
 
 export function Toolbar({ mode, handleModeChange, saveGeometry }: ToolbarProps) {
   const menuButtons: [Mode, string][] = [
+<<<<<<< HEAD
     ["point", " نقطه"],
     ["line", " خط"],
     ["polygon", " محدوده"],
     ["delete", " حذف"],
+=======
+    ["point", " Point"],
+    ["line", " Line"],
+    ["polygon", " Polygon"],
+    ["delete", " Delete"],
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   ];
 
   return (
@@ -81,7 +88,11 @@ export function Toolbar({ mode, handleModeChange, saveGeometry }: ToolbarProps) 
             boxShadow: "0 0 15px rgba(16, 185, 129, 0.3)",
           }}
         >
+<<<<<<< HEAD
           ✅ ثبت هندسه
+=======
+          ✅ Save Geometry
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
         </button>
       )}
     </div>

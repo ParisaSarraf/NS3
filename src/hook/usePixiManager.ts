@@ -85,7 +85,11 @@ export const usePixiManager = (
     }
   }, [props.selectedLocation, props.activeTab]);
 
+<<<<<<< HEAD
   // // ✅ کد اصلاح‌شده
+=======
+  // // ✅ Fixed code
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   // useEffect(() => {
   //   const app = appRef.current;
   //   if (!app || !props.started || !texturesRef.current?.target) return;

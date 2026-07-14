@@ -13,11 +13,19 @@
   top: 20px;
   left: 20px;
   background: white;
+<<<<<<< HEAD
   color: #667eea;
   border: none;
   padding: 10px 20px;
   border-radius: 8px;
   font-family: 'Vazirmatn', sans-serif;
+=======
+  color: var(--c-indigo);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: var(--font-main);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -48,7 +56,11 @@
 .avatar {
   width: 80px;
   height: 80px;
+<<<<<<< HEAD
   background: linear-gradient(135deg, #667eea, #764ba2);
+=======
+  background: linear-gradient(135deg, var(--c-indigo), var(--c-purple));
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -58,14 +70,22 @@
 }
 
 .welcome-section h1 {
+<<<<<<< HEAD
   color: #1a202c;
+=======
+  color: var(--c-gray-900);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 8px;
 }
 
 .welcome-section p {
+<<<<<<< HEAD
   color: #718096;
+=======
+  color: var(--c-gray-500);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   font-size: 1rem;
 }
 
@@ -79,7 +99,11 @@
   display: flex;
   justify-content: space-between;
   padding: 14px;
+<<<<<<< HEAD
   background: #f7fafc;
+=======
+  background: var(--c-gray-50);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   border-radius: 10px;
 }
 
@@ -90,7 +114,11 @@
 }
 
 .info-value {
+<<<<<<< HEAD
   color: #1a202c;
+=======
+  color: var(--c-gray-900);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   font-size: 0.9rem;
 }
 

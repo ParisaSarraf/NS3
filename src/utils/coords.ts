@@ -14,24 +14,40 @@ export const MAP_IMAGE_CONFIG = {
   height: 4033,
 };
 
+<<<<<<< HEAD
 // محدوده نقشه
+=======
+// Map bounds
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 export const worldMinX = WORLD_CONFIG.minX;
 export const worldMaxX = WORLD_CONFIG.maxX;
 export const worldMinY = WORLD_CONFIG.minY;
 export const worldMaxY = WORLD_CONFIG.maxY;
 
+<<<<<<< HEAD
 // ابعاد جهان
 export const worldSpanX = worldMaxX - worldMinX;
 export const worldSpanY = worldMaxY - worldMinY;
 
 // تبدیل مختصات دنیا به پیکسل‌های مانیتور (برای رسم در PIXI)
+=======
+// World dimensions
+export const worldSpanX = worldMaxX - worldMinX;
+export const worldSpanY = worldMaxY - worldMinY;
+
+// Convert world coordinates to screen pixels (for PIXI rendering)
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 export function worldToMap(wx: number, wy: number, screenWidth: number, screenHeight: number) {
   const px = ((wx - WORLD_CONFIG.minX) / worldSpanX) * screenWidth;
   const py = ((wy - WORLD_CONFIG.minY) / worldSpanY) * screenHeight;
   return { x: px, y: py };
 }
 
+<<<<<<< HEAD
 // تبدیل کلیک ماوس روی نقشه به مختصات واقعی دنیای Unreal
+=======
+// Convert mouse click on the map to real Unreal world coordinates
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 export function mapToWorld(px: number, py: number, screenWidth: number, screenHeight: number) {
   return {
     x: WORLD_CONFIG.minX + (px / screenWidth) * worldSpanX,
@@ -40,7 +56,11 @@ export function mapToWorld(px: number, py: number, screenWidth: number, screenHe
   };
 }
 
+<<<<<<< HEAD
 // تبدیل رشته یا ورودی نامشخص به عدد معتبر
+=======
+// Convert a string or unknown input to a valid number
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 export function toNumber(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
 
@@ -52,13 +72,21 @@ export function toNumber(value: unknown): number | null {
   return null;
 }
 
+<<<<<<< HEAD
 // پارس کردن لوکیشن
+=======
+// Parse the location
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 export function parseLocation(
   raw: unknown,
 ): { x: number; y: number; z: number } | null {
   if (!raw) return null;
 
+<<<<<<< HEAD
   // اگر رشته باشد
+=======
+  // If it is a string
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   if (typeof raw === "string") {
     const match = raw.match(
       /X\s*=\s*([-0-9.]+)\s*Y\s*=\s*([-0-9.]+)\s*Z\s*=\s*([-0-9.]+)/i,
@@ -79,7 +107,11 @@ export function parseLocation(
     }
   }
 
+<<<<<<< HEAD
   // اگر آبجکت باشد
+=======
+  // If it is an object
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   if (typeof raw === "object") {
     const obj = raw as Record<string, unknown>;
 

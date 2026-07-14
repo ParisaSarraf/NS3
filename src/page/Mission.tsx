@@ -294,6 +294,7 @@ export default function Mission() {
     };
   }, [started, godView, selectedGroupType, selectedCommunicationRadius]);
 
+<<<<<<< HEAD
   // محاسبه‌ی موشک‌های کانونیکال + پاکسازی trail های منقضی
   // (این بخش قبلاً به‌اشتباه به‌صورت یک useMemo داخل useMemo دیگر نوشته شده بود
   // که باعث نقض Rules of Hooks و خطاهای "hook order changed" می‌شد)
@@ -301,6 +302,15 @@ export default function Mission() {
     const currentIds = new Set(missiles.map((m: any) => String(m.id)));
 
     // پاکسازی trail های موشک‌های منقضی
+=======
+  // Compute canonical missiles + clean up expired trails
+  // (This block was previously written incorrectly as a useMemo inside another useMemo,
+  // which violated the Rules of Hooks and caused "hook order changed" errors)
+  const canonicalMissiles = useMemo<CanonicalObject[]>(() => {
+    const currentIds = new Set(missiles.map((m: any) => String(m.id)));
+
+    // Clean up trails of expired missiles
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
     Object.keys(missileTrailsRef.current).forEach((id) => {
       if (!currentIds.has(id)) {
         delete missileTrailsRef.current[id];
@@ -342,19 +352,31 @@ export default function Mission() {
   }, [missiles]);
 
   const allObjects = useMemo(() => {
+<<<<<<< HEAD
     // ۲. منطق مشاهده کل (God View)
+=======
+    // 2. God View logic
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
     if (godView) {
       const envObjects = environmentContacts.map(toCanonical);
       const mergedGod = new Map<string, CanonicalObject>();
 
+<<<<<<< HEAD
       // ادغام تمامی اشیاء محیطی و موشک‌ها بدون محدودیت
+=======
+      // Merge all environment objects and missiles without restrictions
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
       envObjects.forEach((obj) => mergedGod.set(obj.id, obj));
       canonicalMissiles.forEach((obj) => mergedGod.set(obj.id, obj));
 
       return Array.from(mergedGod.values());
     }
 
+<<<<<<< HEAD
     // تابع کمکی برای بررسی فیلترهای بصری
+=======
+    // Helper to check visual filters
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
     const matchesSelectedFilter = (obj: CanonicalObject) => {
       if (filters.none) return true;
       const partyKey = obj.party?.toLowerCase();
@@ -370,12 +392,20 @@ export default function Mission() {
       return true;
     };
 
+<<<<<<< HEAD
     // ۳. فیلتر کردن اشیاء محیطی بر اساس تنظیمات کاربر
+=======
+    // 3. Filter environment objects based on user settings
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
     const envFiltered = environmentContacts
       .map(toCanonical)
       .filter(matchesSelectedFilter);
 
+<<<<<<< HEAD
     // ۴. مدیریت منطق گروه‌های ارتباطی (Communication Groups)
+=======
+    // 4. Communication Groups logic
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
     if (selectedGroupId !== null) {
       const selectedGroup = communicationGroups.find(
         (g) => g.group === selectedGroupId,
@@ -389,7 +419,11 @@ export default function Mission() {
         memberContacts.map((entry) => String(entry.object_id).trim()),
       );
 
+<<<<<<< HEAD
       // شناسایی دشمنان رصد شده توسط رادارهای اعضای گروه
+=======
+      // Identify enemies detected by group members' radars
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
       const enemiesInRadar = memberContacts
         .flatMap(
           (entry) =>
@@ -408,7 +442,11 @@ export default function Mission() {
 
       const merged = new Map<string, CanonicalObject>();
 
+<<<<<<< HEAD
       // تجمیع اعضای گروه، دشمنان شناسایی شده و موشک‌ها
+=======
+      // Aggregate group members, detected enemies, and missiles
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
       memberContacts.map(toCanonical).forEach((obj) => merged.set(obj.id, obj));
       enemiesInRadar.map(toCanonical).forEach((obj) => merged.set(obj.id, obj));
       canonicalMissiles.forEach((obj) => merged.set(obj.id, obj));
@@ -416,7 +454,11 @@ export default function Mission() {
       return Array.from(merged.values());
     }
 
+<<<<<<< HEAD
     // ۵. حالت عادی (تجمیع رادارهای فعال و اشیاء فیلتر شده)
+=======
+    // 5. Normal mode (aggregate active radars and filtered objects)
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
     const radarUnion = Object.values(radarContactsBySource).flat();
     const mergedById = new Map<string, CanonicalObject>();
 

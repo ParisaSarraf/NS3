@@ -76,7 +76,11 @@ export default function Register()
       setError("phone",
           {
         type: "manual",
+<<<<<<< HEAD
         message: "این شماره تلفن قبلاً ثبت‌نام کرده است",
+=======
+        message: "This phone number is already registered",
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
       });
       return;
     }
@@ -100,27 +104,46 @@ export default function Register()
     }, 800);
   };
 
+<<<<<<< HEAD
   const strengthLabels: string[] = ["", "خیلی ضعیف", "ضعیف", "متوسط", "قوی", "خیلی قوی"];
+=======
+  const strengthLabels: string[] = ["", "Very weak", "Weak", "Medium", "Strong", "Very strong"];
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   const strengthColors: string[] = ["", "#ef4444", "#f97316", "#eab308", "#22c55e", "#10b981"];
 
   return (
       <div className="auth-wrapper">
         <div className="auth-card">
+<<<<<<< HEAD
           <h1 className="auth-title">ایجاد حساب</h1>
           <p className="auth-subtitle">برای ثبت‌نام اطلاعات خود را وارد کنید</p>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className={`field-group ${errors.name ? "has-error" : ""}`}>
               <label>نام و نام خانوادگی</label>
+=======
+          <h1 className="auth-title">Create Account</h1>
+          <p className="auth-subtitle">Enter your information to sign up</p>
+
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <div className={`field-group ${errors.name ? "has-error" : ""}`}>
+              <label>Full Name</label>
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
               <div className="input-wrapper">
               <span className="input-icon">
                 <img src="/public/images/person.png" alt="person" />
               </span>
                 <input
                     type="text"
+<<<<<<< HEAD
                     placeholder="نام کامل"
                     {...register("name", {
                       required: "نام الزامی است",
+=======
+                    placeholder="Full name"
+                    {...register("name", {
+                      required: "Name is required",
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
                     })}
                 />
               </div>
@@ -128,7 +151,11 @@ export default function Register()
             </div>
 
             <div className={`field-group ${errors.phone ? "has-error" : ""}`}>
+<<<<<<< HEAD
               <label>شماره تلفن</label>
+=======
+              <label>Phone Number</label>
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
               <div className="input-wrapper">
               <span className="input-icon">
                 <img src="/public/images/envelope.png" alt="envelope" />
@@ -136,12 +163,21 @@ export default function Register()
                 <input
                     type="tel"
                     placeholder="09123456789"
+<<<<<<< HEAD
                     dir="rtl"
                     {...register("phone", {
                       required: "شماره تلفن الزامی است",
                       pattern: {
                         value: /^09\d{9}$/,
                         message: "شماره تلفن معتبر وارد کنید (09XXXXXXXXX)",
+=======
+                    dir="ltr"
+                    {...register("phone", {
+                      required: "Phone number is required",
+                      pattern: {
+                        value: /^09\d{9}$/,
+                        message: "Enter a valid phone number (09XXXXXXXXX)",
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
                       },
                     })}
                 />
@@ -150,19 +186,32 @@ export default function Register()
             </div>
 
             <div className={`field-group ${errors.password ? "has-error" : ""}`}>
+<<<<<<< HEAD
               <label>رمز عبور</label>
+=======
+              <label>Password</label>
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
               <div className="input-wrapper">
               <span className="input-icon">
                 <img src="/public/images/595586.png" alt="Lock" />
               </span>
                 <input
                     type={showPass ? "text" : "password"}
+<<<<<<< HEAD
                     placeholder="رمز عبور قوی"
                     {...register("password", {
                       required: "رمز عبور الزامی است",
                       minLength: {
                         value: 6,
                         message: "رمز باید حداقل ۶ کاراکتر باشد",
+=======
+                    placeholder="Strong password"
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: {
+                        value: 6,
+                        message: "Password must be at least 6 characters",
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
                       },
                       onChange: (e: ChangeEvent<HTMLInputElement>) => calcStrength(e.target.value),
                     })}
@@ -201,17 +250,28 @@ export default function Register()
             </div>
 
             <div className={`field-group ${errors.confirm ? "has-error" : ""}`}>
+<<<<<<< HEAD
               <label>تکرار رمز عبور</label>
+=======
+              <label>Confirm Password</label>
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
               <div className="input-wrapper">
               <span className="input-icon">
                 <img src="/public/images/Key.png" alt="Key" />
               </span>
                 <input
                     type="password"
+<<<<<<< HEAD
                     placeholder="تکرار رمز"
                     {...register("confirm", {
                       required: "تکرار رمز الزامی است",
                       validate: (value) => value === password || "رمزها یکسان نیستند",
+=======
+                    placeholder="Repeat password"
+                    {...register("confirm", {
+                      required: "Password confirmation is required",
+                      validate: (value) => value === password || "Passwords do not match",
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
                     })}
                 />
                 {confirm && (
@@ -224,12 +284,20 @@ export default function Register()
             </div>
 
             <button className="btn-primary" type="submit" disabled={loading}>
+<<<<<<< HEAD
               {loading ? <span className="spinner" /> : "ثبت‌نام"}
+=======
+              {loading ? <span className="spinner" /> : "Sign Up"}
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
             </button>
           </form>
 
           <p className="auth-switch">
+<<<<<<< HEAD
             حساب دارید؟ <Link to="/login">وارد شوید</Link>
+=======
+            Already have an account? <Link to="/login">Log in</Link>
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
           </p>
         </div>
       </div>

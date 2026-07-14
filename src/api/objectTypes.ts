@@ -38,6 +38,10 @@ export const useMissiles = (started: boolean) => {
     queryKey: ["missiles"],
     queryFn: scenarioApi.getMissiles,
     enabled: started,
+<<<<<<< HEAD
     refetchInterval: 2000, // به‌روزرسانی هر ۲ ثانیه
+=======
+    refetchInterval: 2000, // Refresh every 2 seconds
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   });
 };

@@ -38,11 +38,19 @@ export function LabelDialog({ labelInput, setLabelInput, onCancel, onConfirm }: 
         }}
       >
         <h3 style={{ margin: 0, color: "#fff", fontSize: "16px" }}>
+<<<<<<< HEAD
           نام‌گذاری عارضه جدید
         </h3>
         <input
           type="text"
           placeholder="نام یا عنوان را وارد کنید..."
+=======
+          Name New Feature
+        </h3>
+        <input
+          type="text"
+          placeholder="Enter a name or title..."
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
           value={labelInput}
           onChange={(e) => setLabelInput(e.target.value)}
           style={{
@@ -69,7 +77,11 @@ export function LabelDialog({ labelInput, setLabelInput, onCancel, onConfirm }: 
               fontFamily: "inherit",
             }}
           >
+<<<<<<< HEAD
             انصراف
+=======
+            Cancel
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
           </button>
           <button
             onClick={onConfirm}
@@ -85,7 +97,11 @@ export function LabelDialog({ labelInput, setLabelInput, onCancel, onConfirm }: 
               fontWeight: "600",
                 }}
               >
+<<<<<<< HEAD
             تایید
+=======
+            Confirm
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
           </button>
         </div>
       </div>

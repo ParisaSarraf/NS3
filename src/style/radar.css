@@ -2,7 +2,11 @@
   --phosphor-green: #4cff6a;
   --alert-red: #ff4c4c;
   --hud-bg: rgba(10, 25, 10, 0.85);
+<<<<<<< HEAD
   --grid-line: rgba(76, 255, 106, 0.2);
+=======
+  --grid-line: var(--green-a20);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 }
 
 .radar-tab-wrapper {
@@ -11,7 +15,11 @@
   align-items: center;
   width: 100%;
   height: 100%;
+<<<<<<< HEAD
   background: radial-gradient(circle, #0a1a0a 0%, #000 100%);
+=======
+  background: radial-gradient(circle, #0a1a0a 0%, var(--c-black) 100%);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   position: relative;
   overflow: hidden;
 }
@@ -34,7 +42,11 @@
   background: var(--hud-bg);
   border: 1px solid var(--phosphor-green);
   border-radius: 50%;
+<<<<<<< HEAD
   box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(76, 255, 106, 0.2);
+=======
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9), 0 0 20px var(--green-a20);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   border: 2px solid var(--phosphor-green);
 }
 
@@ -54,7 +66,11 @@
 .marker {
   position: absolute;
   color: var(--phosphor-green);
+<<<<<<< HEAD
   font-family: 'Share Tech Mono', monospace;
+=======
+  font-family: var(--font-mono);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   font-size: 14px;
   text-shadow: 0 0 5px var(--phosphor-green);
   font-weight: bold;

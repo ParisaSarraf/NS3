@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap");
+<<<<<<< HEAD
 @import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 @import "./style/mission.css";
@@ -7,13 +8,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+=======
+
+@import "./style/tokens.css";
+@import "./style/mission.css";
+@import "./style/mission-start-page.css";
+@import "./style/radar.css";
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 
 
 body {
   margin: 0;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
+<<<<<<< HEAD
   font-family: "Vazirmatn", "JetBrains Mono", monospace;
+=======
+  font-family: var(--font-body);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 }
 
 .custom-scroll::-webkit-scrollbar {
@@ -22,15 +40,27 @@ body {
 }
 
 .custom-scroll::-webkit-scrollbar-track {
+<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.01);
+=======
+  background: var(--white-a01);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   border-radius: 10px;
 }
 
 .custom-scroll::-webkit-scrollbar-thumb {
+<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.08);
+=======
+  background: var(--white-a08);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   border-radius: 10px;
 }
 
 .custom-scroll::-webkit-scrollbar-thumb:hover {
+<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.15);
+=======
+  background: var(--white-a15);
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 }

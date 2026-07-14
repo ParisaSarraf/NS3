@@ -141,11 +141,19 @@ export function useMapManager() {
       labelInput.trim() ||
       `${
         pendingGeom.type === "point"
+<<<<<<< HEAD
           ? "نقطه"
           : pendingGeom.type === "line"
             ? "خط"
             : "محدوده"
       } بدون نام`;
+=======
+          ? "Point"
+          : pendingGeom.type === "line"
+            ? "Line"
+            : "Area"
+      } (Unnamed)`;
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 
     try {
       const response = await fetch(`${BaseURL}/api/features`, {

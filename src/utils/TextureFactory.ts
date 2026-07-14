@@ -135,7 +135,11 @@ export function createMilStdTexture(
 
   const affiliation = IDENTITY_MAP[party.toLowerCase()] || "U";
 
+<<<<<<< HEAD
   // اگر کد با '1' شروع شود یعنی استاندارد جدید عددی است
+=======
+  // If the code starts with '1', it uses the new numeric standard
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   if (!sidc.startsWith("1")) {
     sidc = sidc.substring(0, 1) + affiliation + sidc.substring(2);
   }
@@ -145,7 +149,11 @@ export function createMilStdTexture(
     frame: true,
     icon: true,
     fill: true,
+<<<<<<< HEAD
     standard: sidc.startsWith("1") ? "2525D" : "2525C", // سوئیچ هوشمند بین استانداردها
+=======
+    standard: sidc.startsWith("1") ? "2525D" : "2525C", // Smart switch between standards
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   });
 
   return PIXI.Texture.from(symbol.asCanvas());

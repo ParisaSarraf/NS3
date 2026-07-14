@@ -33,10 +33,17 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
         }}
       >
         <h3 style={{ margin: 0, fontSize: "17px", fontWeight: "600", color: "#f8fafc" }}>
+<<<<<<< HEAD
           مدیریت لایه‌ها
         </h3>
         <span style={{ fontSize: "12px", color: "#64748b", marginTop: "4px", display: "block" }}>
           {features.length} عارضه روی نقشه
+=======
+          Layer Manager
+        </h3>
+        <span style={{ fontSize: "12px", color: "#64748b", marginTop: "4px", display: "block" }}>
+          {features.length} feature(s) on the map
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
         </span>
       </div>
 
@@ -53,7 +60,11 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
       >
         {features.length === 0 && (
           <div style={{ textAlign: "center", color: "#475569", marginTop: 40, fontSize: "14px"}}>
+<<<<<<< HEAD
             لیست لایه‌ها خالی است.
+=======
+            The layer list is empty.
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
           </div>
         )}
         {features.map((f) => {

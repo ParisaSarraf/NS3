@@ -27,7 +27,11 @@ const Map = () => {
         position: "relative",
         width: "100vw",
         height: "100vh",
+<<<<<<< HEAD
         direction: "rtl",
+=======
+        direction: "ltr",
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
         fontFamily: "Vazirmatn",
       }}
     >

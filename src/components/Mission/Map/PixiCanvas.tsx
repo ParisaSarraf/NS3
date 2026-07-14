@@ -20,7 +20,11 @@ import type { PixiCanvasProps } from "../../../utils/types";
 //     />
 //   );
 // };
+<<<<<<< HEAD
 // ✅ کد اصلاح‌شده
+=======
+// ✅ Fixed code
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 const PixiCanvas: React.FC<PixiCanvasProps> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   usePixiManager(containerRef, props);

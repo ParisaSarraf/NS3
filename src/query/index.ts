@@ -9,7 +9,11 @@ export const getComponents=async ()=>
 
   if (!token)
   {
+<<<<<<< HEAD
     throw new Error("توکن پیدا نشد.");
+=======
+    throw new Error("Token not found.");
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   }
 
   try 
@@ -29,7 +33,11 @@ export const getComponents=async ()=>
     {
       localStorage.removeItem("access_token");
       window.location.href = "/login";
+<<<<<<< HEAD
       throw new Error("سرور در دسترس نیست.");
+=======
+      throw new Error("Server is unavailable.");
+>>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
     }
     
     throw error;
