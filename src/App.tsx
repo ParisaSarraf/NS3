@@ -5,20 +5,12 @@ import NetworkSystemThree from "./page/NetworkSystemThree";
 import Map from "./page/Map";
 import Lidar from "./page/Lidar";
 import Mission from "./page/Mission";
-<<<<<<< HEAD
 import Creation from "./page/Creation";
-=======
-import Creation from "./page/FleetTwin";
->>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
 import Login from "./components/Layout/Login/Login";
 
 function App() {
   const [isLogin, setIsLogin] = useState<boolean>(
-<<<<<<< HEAD
     () => !!localStorage.getItem("access_token")
-=======
-    () => !!localStorage.getItem("access_token"),
->>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
   );
 
   const handleLogout = () => {
@@ -57,11 +49,7 @@ function App() {
               <Route path="/Map" element={<Map />} />
               <Route path="/Lidar" element={<Lidar />} />
               <Route path="/mission" element={<Mission />} />
-<<<<<<< HEAD
               <Route path="/creation" element={<Creation />} />
-=======
-              <Route path="/FleetTwin" element={<Creation />} />
->>>>>>> c0e269895ca1682592bfcff28b61188ef48dbf1e
               <Route path="*" element={<Navigate to="/NS3" replace />} />
             </>
           )}
