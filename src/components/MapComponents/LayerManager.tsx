@@ -21,6 +21,7 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
         zIndex: 10,
         display: "flex",
         flexDirection: "column",
+        marginRight: 55,
         borderRadius: "28px",
         overflow: "hidden",
       }}
