@@ -33,8 +33,8 @@ const PARENT_CONFIG: Record<string, { icon: ReactNode; id: string; addable: bool
   power:{id:"3",icon:<Zap size={15} />,addable:true},
   weapon:{id:"5",icon:<Crosshair size={15} />,addable:true},
   weapons:{id:"5",icon: <Crosshair size={15} />,addable:true},
-  coms:{id:"6", icon: <Radio size={15} />,addable: true},
-  mission:{id:"7", icon: <Box size={15} />,addable:true},
+  coms:{id:"6",icon:<Radio size={15} />,addable: true},
+  mission:{id:"7",icon:<Box size={15} />,addable:true},
 };
 
 const CHILD_ICON_MAP: Record<string, ReactNode> = 
