@@ -15,7 +15,7 @@ export function LayerManager({ features, hiddenIds, toggleVisibility, deleteFeat
         ...darkGlassStyle,
         position: "absolute",
         top: 90,
-        right: 20,
+        left: 20,
         bottom: 20,
         width: 330,
         zIndex: 10,
