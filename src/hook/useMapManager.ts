@@ -6,6 +6,7 @@ import type {
   Mode,
   PendingGeometry,
 } from "../utils/types";
+import { myAxios } from "../api/api";
 
 export function useMapManager() {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -22,7 +23,6 @@ export function useMapManager() {
   const drawMarkers = useRef<maplibregl.Marker[]>([]);
   const hiddenIdsRef = useRef<string[]>([]);
 
-  const BaseURL = import.meta.env.VITE_API_URL_BACKEND;
 
   useEffect(() => {
     modeRef.current = mode;
@@ -40,9 +40,8 @@ export function useMapManager() {
 
   const refreshData = useCallback(async () => {
     try {
-      const res = await fetch(`${BaseURL}/api/features`);
-      
-      const data: Feature[] = await res.json();
+      const res = await myAxios.get(`/api/features`);
+      const data: Feature[] = res.data;
       setFeatures(data);
 
       if (mapRef.current && mapRef.current.getSource("features")) {
@@ -86,10 +85,8 @@ export function useMapManager() {
   const deleteFeature = useCallback(
     async (id: string) => {
       try {
-        await fetch(`${BaseURL}/api/features`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id }),
+        await myAxios.delete(`${BaseURL}/api/features`, {
+          data: { id },
         });
         setFeatures((prev) => prev.filter((f) => f.id !== id));
         setHiddenIds((prev) => prev.filter((hiddenId) => hiddenId !== id));
