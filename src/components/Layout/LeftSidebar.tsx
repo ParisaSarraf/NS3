@@ -1,4 +1,4 @@
-import { Gamepad, LogOut, Map, Network, Radar, Target } from "lucide-react";
+import { Gamepad, LogOut, LucideTrafficCone, Map, Network, Radar, Target, TrafficCone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { logout } from "../../services/authService";
@@ -31,6 +31,7 @@ export function LeftSidebar({ onLogout }: LeftSidebarProps)
     { icon: Radar, label: "LiDar", to: "/lidar" },
     { icon: Target, label: "Mission", to: "/mission" },
     { icon: Gamepad, label: "FleetTwin", to: "/FleetTwin" },
+    { icon: LucideTrafficCone, label: "Traffic", to: "/Traffic" },
   ];
 
   return (

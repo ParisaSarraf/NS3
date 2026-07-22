@@ -7,6 +7,7 @@ import Lidar from "./page/Lidar";
 import Mission from "./page/Mission";
 import Creation from "./page/FleetTwin";
 import Login from "./components/Layout/Login/Login";
+import Traffic from "./page/Traffic";
 
 function App() {
   const [isLogin, setIsLogin] = useState<boolean>(
@@ -50,6 +51,7 @@ function App() {
               <Route path="/Lidar" element={<Lidar />} />
               <Route path="/mission" element={<Mission />} />
               <Route path="/FleetTwin" element={<Creation />} />
+              <Route path="/Traffic" element={<Traffic />} />
               <Route path="*" element={<Navigate to="/NS3" replace />} />
             </>
           )}
