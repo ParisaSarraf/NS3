@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import ModuleCard from "../common/ModuleCard";
 import CompatibilityChecker from "./CompatibilityChecker";
-
+import ComponentModal from "../../Mission/Modals/ComponentModal";
 const leftModules = [
   {
     id: "radar",
@@ -82,45 +82,46 @@ const vessels = [
   { id: "tao02", name: "T-AO-02 Provider", role: "Support" },
 ];
 
-const ShipBlueprint = () => (
-  <svg
-    className="ship-svg"
-    viewBox="0 0 120 420"
-    role="img"
+const ShipBlueprint = ({ onClick }) => (
+  <button
+    type="button"
+    className="ship-blueprint-trigger"
+    onClick={onClick}
     aria-label="Vessel top-down blueprint"
   >
-    {/* hull */}
-    <path
-      d="M60 10 C 78 55, 88 100, 88 170 L 88 340 C 88 372, 74 396, 60 404 C 46 396, 32 372, 32 340 L 32 170 C 32 100, 42 55, 60 10 Z"
-      fill="var(--sky-a20)"
-      fillOpacity="0.25"
-      stroke="var(--accent-blue)"
-      strokeWidth="1.5"
-      strokeDasharray="6 4"
-    />
-    {/* center line */}
-    <line
-      x1="60"
-      y1="18"
-      x2="60"
-      y2="398"
-      stroke="var(--white-a20)"
-      strokeWidth="1"
-      strokeDasharray="2 6"
-    />
-    {/* deck sections */}
-    <rect x="46" y="70" width="28" height="34" rx="3" fill="none" stroke="var(--white-a20)" />
-    <rect x="42" y="130" width="36" height="70" rx="4" fill="none" stroke="var(--white-a20)" />
-    <rect x="44" y="224" width="32" height="58" rx="4" fill="none" stroke="var(--white-a20)" />
-    <rect x="48" y="306" width="24" height="40" rx="10" fill="none" stroke="var(--white-a20)" />
-    {/* mounts */}
-    <circle cx="60" cy="46" r="9" fill="none" stroke="var(--accent-blue)" strokeWidth="1.2" />
-    <circle cx="60" cy="46" r="3" fill="var(--accent-blue)" />
-    <circle cx="60" cy="166" r="11" fill="none" stroke="var(--white-a20)" />
-    <circle cx="60" cy="254" r="11" fill="none" stroke="var(--white-a20)" />
-    <circle cx="60" cy="372" r="8" fill="none" stroke="var(--accent-blue)" strokeWidth="1.2" />
-  </svg>
+    <svg
+      className="ship-svg"
+      viewBox="0 0 120 420"
+      role="img"
+      aria-label="Vessel top-down blueprint"
+    >
+      <path
+        d="M60 10 C 78 55, 88 100, 88 170 L 88 340 C 88 372, 74 396, 60 404 C 46 396, 32 372, 32 340 L 32 170 C 32 100, 42 55, 60 10 Z"
+        fill="var(--sky-a20)"
+        fillOpacity="0.25"
+        stroke="var(--accent-blue)"
+        strokeWidth="1.5"
+        strokeDasharray="6 4"
+      />
+      <line
+        x1="60" y1="18" x2="60" y2="398"
+        stroke="var(--white-a20)"
+        strokeWidth="1"
+        strokeDasharray="2 6"
+      />
+      <rect x="46" y="70"  width="28" height="34" rx="3"  fill="none" stroke="var(--white-a20)" />
+      <rect x="42" y="130" width="36" height="70" rx="4"  fill="none" stroke="var(--white-a20)" />
+      <rect x="44" y="224" width="32" height="58" rx="4"  fill="none" stroke="var(--white-a20)" />
+      <rect x="48" y="306" width="24" height="40" rx="10" fill="none" stroke="var(--white-a20)" />
+      <circle cx="60" cy="46"  r="9"  fill="none" stroke="var(--accent-blue)" strokeWidth="1.2" />
+      <circle cx="60" cy="46"  r="3"  fill="var(--accent-blue)" />
+      <circle cx="60" cy="166" r="11" fill="none" stroke="var(--white-a20)" />
+      <circle cx="60" cy="254" r="11" fill="none" stroke="var(--white-a20)" />
+      <circle cx="60" cy="372" r="8"  fill="none" stroke="var(--accent-blue)" strokeWidth="1.2" />
+    </svg>
+  </button>
 );
+
 
 const markers = [
   { id: "m1", x: 130, y: 70, main: true },
@@ -210,7 +211,7 @@ const TaskForcePanel = ({ expanded }) => (
 
 const VesselAssembly = () => {
   const [activeTab, setActiveTab] = useState("assembly");
-
+  const [modalOpen, setModalOpen] = useState(false);
   return (
     <div className="vessel-assembly">
       <div className="tabs">
@@ -269,7 +270,7 @@ const VesselAssembly = () => {
                   ))}
                 </div>
 
-                <ShipBlueprint />
+<ShipBlueprint onClick={() => setModalOpen(true)} />
 
                 <div className="module-list right-modules">
                   {rightModules.map((m) => (
@@ -287,7 +288,11 @@ const VesselAssembly = () => {
       ) : (
         <TaskForcePanel expanded />
       )}
-    </div>
+      
+      {modalOpen && (
+        <ComponentModal onClose={() => setModalOpen(false)} />
+      )}
+    </div>  
   );
 };
 
