@@ -1,6 +1,21 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+const proxyTarget = 'http://172.22.16.166:1998'
+
+const proxyConfig = {
+  target: proxyTarget,
+  changeOrigin: true,
+  configure: (proxy: any) => {
+    proxy.on('proxyReq', (proxyReq: any, req: any) => {
+      const auth = req.headers['authorization']
+      if (auth) {
+        proxyReq.setHeader('Authorization', auth)
+      }
+    })
+  },
+}
+
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -8,31 +23,9 @@ export default defineConfig({
     port: 3000,
     browser: 'chrome',
     proxy: {
-      '/auth': {
-        target: 'http://172.22.16.94:1998',
-        changeOrigin: true,
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq, req) => 
-            {
-            const auth = req.headers['authorization']
-            if (auth) {
-              proxyReq.setHeader('Authorization', auth)
-            }
-          })
-        },
-      },
-      '/components': {
-        target: 'http://172.22.16.94:1998',
-        changeOrigin: true,
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq, req) => {
-            const auth = req.headers['authorization']
-            if (auth) {
-              proxyReq.setHeader('Authorization', auth)
-            }
-          })
-        },
-      }
+      '/auth': proxyConfig,
+      '/components': proxyConfig,
+      '/ships': proxyConfig,       
     }
   }
 })
