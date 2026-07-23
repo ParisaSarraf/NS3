@@ -2,10 +2,8 @@ import axios from "axios";
 import type { AirTrack, BBox, WeatherData } from "../api/trafficTypes";
 
 // =====================================================================
-// ۱) ترافیک هوایی — OpenSky Network (رایگان، بدون کلید برای استفاده محدود)
-//    https://opensky-network.org/apidoc/
+// ۱) ترافیک هوایی — OpenSky Network از طریق پروکسی Vite (/opensky)
 // =====================================================================
-// const OPENSKY_URL = "https://opensky-network.org/api/states/all";
 const OPENSKY_URL = "/opensky/states/all";
 
 export async function fetchAirTraffic(bbox: BBox): Promise<AirTrack[]> {
@@ -16,7 +14,6 @@ export async function fetchAirTraffic(bbox: BBox): Promise<AirTrack[]> {
 
   if (!data?.states) return [];
 
-  // هر state یک آرایه است — ایندکس‌ها طبق مستندات OpenSky
   return (data.states as any[][])
     .map((s) => ({
       icao24: s[0],
@@ -24,7 +21,7 @@ export async function fetchAirTraffic(bbox: BBox): Promise<AirTrack[]> {
       originCountry: s[2],
       longitude: s[5],
       latitude: s[6],
-      altitude: s[13] ?? s[7], // geo altitude یا baro altitude
+      altitude: s[13] ?? s[7],
       onGround: s[8],
       velocity: s[9],
       heading: s[10],
@@ -35,8 +32,7 @@ export async function fetchAirTraffic(bbox: BBox): Promise<AirTrack[]> {
 }
 
 // =====================================================================
-// ۲) داده هواشناسی — Open-Meteo (کاملاً رایگان و بدون API Key)
-//    https://open-meteo.com/en/docs
+// ۲) هواشناسی — Open-Meteo (رایگان، بدون کلید)
 // =====================================================================
 const OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -68,16 +64,20 @@ export async function fetchWeather(
 }
 
 // =====================================================================
-// ۳) ترافیک دریایی (AIS)
-//    گزینه A: aisstream.io — رایگان با WebSocket (کلید در .env بگذارید)
-//    اتصال WebSocket داخل hook (useMarineTraffic) انجام می‌شود.
-//    گزینه B: اگر بک‌اند خودتان AIS دارد، این تابع را به endpoint خودتان وصل کنید.
+// ۳) ترافیک دریایی (AIS) — از طریق پروکسی WebSocket خود Vite
+//
+// ⚠️ باگ قبلی: این URL مستقیم به wss://stream.aisstream.io می‌زد در حالی
+// که پروکسی /ais-stream در vite.config.ts تعریف شده بود و استفاده نمی‌شد.
+// حالا اتصال از طریق همان پروکسی برقرار می‌شود (ws://localhost:3000/ais-stream).
+// در پروداکشن هم باید معادل همین location را در Nginx تعریف کنید.
 // =====================================================================
-export const AISSTREAM_WS_URL = "wss://stream.aisstream.io/v0/stream";
+const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+export const AISSTREAM_WS_URL = `${wsProtocol}://${window.location.host}/ais-stream`;
 
 export function buildAisSubscription(bbox: BBox) {
   return {
     APIKey: import.meta.env.VITE_AISSTREAM_KEY,
+    // فرمت aisstream: [[[lat1, lon1], [lat2, lon2]]]
     BoundingBoxes: [
       [
         [bbox.lamin, bbox.lomin],
