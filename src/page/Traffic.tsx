@@ -4,6 +4,11 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import "../style/traffic.css";
 import type { AirTrack, BBox, VesselTrack } from "../api/trafficTypes";
 import {
+  fetchAircraftMeta,
+  fetchFlightRoute,
+  fetchFlightTrack,
+} from "../services/trafficService";
+import {
   useAirTraffic,
   useMarineTraffic,
   useWeather,
@@ -13,8 +18,47 @@ import {
 const BBOX: BBox = { lamin: 23, lomin: 43, lamax: 41, lomax: 65 };
 const CENTER: [number, number] = [54, 30.5];
 
-const AIR_COLOR = "#EAC26B";
 const SEA_COLOR = "#4FB9C9";
+const TRACK_COLOR = "#5E9FE8"; // رنگ مسیر پرواز انتخاب‌شده
+
+// ---------------------------------------------------------------------
+// دسته‌بندی نوع هواپیما بر اساس ADS-B category (فیلد extended در OpenSky)
+// ---------------------------------------------------------------------
+type CatGroup = "light" | "medium" | "heavy" | "rotor" | "other";
+
+const AIR_COLORS: Record<CatGroup, string> = {
+  light: "#72BC8F", // سبک
+  medium: "#EAC26B", // مسافربری متوسط (A320/B737)
+  heavy: "#DE9255", // سنگین (B777/A380)
+  rotor: "#BF8EDA", // هلی‌کوپتر
+  other: "#9AA7BD", // نامشخص
+};
+
+const AIR_LEGEND: Array<{ key: CatGroup; label: string }> = [
+  { key: "light", label: "LIGHT" },
+  { key: "medium", label: "LARGE" },
+  { key: "heavy", label: "HEAVY" },
+  { key: "rotor", label: "HELI" },
+  { key: "other", label: "N/A" },
+];
+
+const CATEGORY_LABELS: Record<number, string> = {
+  2: "Light aircraft",
+  3: "Small aircraft",
+  4: "Large aircraft",
+  5: "High-vortex large",
+  6: "Heavy aircraft",
+  7: "High performance",
+  8: "Rotorcraft",
+};
+
+function catGroup(category: number): CatGroup {
+  if (category === 2 || category === 3) return "light";
+  if (category === 4 || category === 5) return "medium";
+  if (category === 6 || category === 7) return "heavy";
+  if (category === 8) return "rotor";
+  return "other";
+}
 
 const EMPTY_FC: GeoJSON.FeatureCollection = {
   type: "FeatureCollection",
@@ -22,9 +66,7 @@ const EMPTY_FC: GeoJSON.FeatureCollection = {
 };
 
 // ---------------------------------------------------------------------
-// استایل تیره نقشه — CARTO Dark Matter (رایگان)
-// نکته: پراپرتی glyphs برای لیبل‌های متنی الزامی است — در نسخه قبلی
-// نبود و لایه‌های متنی خطا می‌دادند.
+// استایل تیره نقشه — CARTO Dark Matter
 // ---------------------------------------------------------------------
 const MAP_STYLE: maplibregl.StyleSpecification = {
   version: 8,
@@ -46,7 +88,7 @@ const MAP_STYLE: maplibregl.StyleSpecification = {
 };
 
 // ---------------------------------------------------------------------
-// آیکون‌های SVG حرفه‌ای — رو به شمال، با icon-rotate به سمت heading می‌چرخند
+// آیکون‌های SVG — برای هر دسته هواپیما یک رنگ
 // ---------------------------------------------------------------------
 const PLANE_SVG = (color: string) =>
   `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"><path fill="${color}" stroke="#0b0f1c" stroke-width="0.5" d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>`;
@@ -75,24 +117,30 @@ function loadSvgImage(
 }
 
 // ---------------------------------------------------------------------
-// Trail (رد مسیر) — تاریخچه موقعیت هر هدف برای نمایش مسیر حرکت
+// Trail (رد مسیر کوتاه پشت هر هدف)
 // ---------------------------------------------------------------------
-type Trail = { coords: [number, number][]; updated: number };
+type Trail = { coords: [number, number][]; updated: number; cat: CatGroup };
 
 function pushTrail(
   trails: Map<string, Trail>,
   id: string,
   lng: number,
   lat: number,
+  cat: CatGroup,
   maxLen = 50,
 ) {
-  const t = trails.get(id) ?? { coords: [], updated: 0 };
+  const t = trails.get(id) ?? { coords: [], updated: 0, cat };
   const last = t.coords[t.coords.length - 1];
-  if (!last || Math.abs(last[0] - lng) > 1e-4 || Math.abs(last[1] - lat) > 1e-4) {
+  if (
+    !last ||
+    Math.abs(last[0] - lng) > 1e-4 ||
+    Math.abs(last[1] - lat) > 1e-4
+  ) {
     t.coords.push([lng, lat]);
     if (t.coords.length > maxLen) t.coords.shift();
   }
   t.updated = Date.now();
+  t.cat = cat;
   trails.set(id, t);
 }
 
@@ -103,7 +151,9 @@ function pruneTrails(trails: Map<string, Trail>, maxAgeMs = 10 * 60_000) {
   }
 }
 
-function trailsToGeoJSON(trails: Map<string, Trail>): GeoJSON.FeatureCollection {
+function trailsToGeoJSON(
+  trails: Map<string, Trail>,
+): GeoJSON.FeatureCollection {
   return {
     type: "FeatureCollection",
     features: Array.from(trails.entries())
@@ -111,7 +161,7 @@ function trailsToGeoJSON(trails: Map<string, Trail>): GeoJSON.FeatureCollection 
       .map(([id, t]) => ({
         type: "Feature" as const,
         geometry: { type: "LineString" as const, coordinates: t.coords },
-        properties: { id },
+        properties: { id, cat: t.cat },
       })),
   };
 }
@@ -129,11 +179,14 @@ function airToGeoJSON(tracks: AirTrack[]): GeoJSON.FeatureCollection {
         coordinates: [t.longitude, t.latitude],
       },
       properties: {
+        icao24: t.icao24,
         callsign: t.callsign,
         altitude: t.altitude ?? 0,
         rot: t.heading ?? 0,
         velocity: t.velocity ?? 0,
         country: t.originCountry,
+        category: t.category,
+        cat: catGroup(t.category),
       },
     })),
   };
@@ -159,8 +212,36 @@ function seaToGeoJSON(vessels: VesselTrack[]): GeoJSON.FeatureCollection {
   };
 }
 
+function lineToGeoJSON(coords: [number, number][]): GeoJSON.FeatureCollection {
+  if (coords.length < 2) return EMPTY_FC;
+  return {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: { type: "LineString", coordinates: coords },
+        properties: {},
+      },
+    ],
+  };
+}
+
+const airLineColor: maplibregl.ExpressionSpecification = [
+  "match",
+  ["get", "cat"],
+  "light",
+  AIR_COLORS.light,
+  "medium",
+  AIR_COLORS.medium,
+  "heavy",
+  AIR_COLORS.heavy,
+  "rotor",
+  AIR_COLORS.rotor,
+  AIR_COLORS.other,
+];
+
 // ---------------------------------------------------------------------
-// ترجمه کد هواشناسی WMO به آیکون و متن
+// ترجمه کد هواشناسی WMO
 // ---------------------------------------------------------------------
 function wmoInfo(code: number): { label: string; icon: string } {
   if (code === 0) return { label: "Clear Sky", icon: "\u2600\uFE0F" };
@@ -186,11 +267,10 @@ const Traffic = () => {
   const [showAir, setShowAir] = useState(true);
   const [showSea, setShowSea] = useState(true);
 
-  // هواشناسی مرکز نقشه را دنبال می‌کند (با گرد کردن برای cache شدن query)
   const [wxPos, setWxPos] = useState({ lat: CENTER[1], lon: CENTER[0] });
 
   const airQuery = useAirTraffic(BBOX, showAir);
-  const { vessels, connected } = useMarineTraffic(BBOX, showSea);
+  const { vessels, connected, lastError } = useMarineTraffic(BBOX, showSea);
   const weatherQuery = useWeather(wxPos.lat, wxPos.lon);
 
   const airTrailsRef = useRef<Map<string, Trail>>(new Map());
@@ -210,7 +290,10 @@ const Traffic = () => {
     });
     mapRef.current = map;
 
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+    map.addControl(
+      new maplibregl.NavigationControl({ showCompass: false }),
+      "bottom-right",
+    );
 
     map.on("moveend", () => {
       const c = map.getCenter();
@@ -220,18 +303,21 @@ const Traffic = () => {
     map.on("load", async () => {
       try {
         await Promise.all([
-          loadSvgImage(map, "plane-icon", PLANE_SVG(AIR_COLOR)),
+          ...Object.entries(AIR_COLORS).map(([key, color]) =>
+            loadSvgImage(map, `plane-${key}`, PLANE_SVG(color)),
+          ),
           loadSvgImage(map, "ship-icon", SHIP_SVG(SEA_COLOR)),
         ]);
       } catch {
         // اگر لود آیکون شکست خورد، لایه‌ها بدون آیکون ساخته می‌شوند
       }
-      if (!mapRef.current) return; // کامپوننت unmount شده
+      if (!mapRef.current) return;
 
       map.addSource("air", { type: "geojson", data: EMPTY_FC });
       map.addSource("sea", { type: "geojson", data: EMPTY_FC });
       map.addSource("air-trails", { type: "geojson", data: EMPTY_FC });
       map.addSource("sea-trails", { type: "geojson", data: EMPTY_FC });
+      map.addSource("sel-track", { type: "geojson", data: EMPTY_FC });
 
       // ----- رد مسیرها (زیر آیکون‌ها) -----
       map.addLayer({
@@ -240,7 +326,7 @@ const Traffic = () => {
         source: "air-trails",
         layout: { "line-cap": "round", "line-join": "round" },
         paint: {
-          "line-color": AIR_COLOR,
+          "line-color": airLineColor,
           "line-width": 1.4,
           "line-opacity": 0.35,
         },
@@ -257,13 +343,26 @@ const Traffic = () => {
         },
       });
 
-      // ----- آیکون هواپیماها -----
+      // ----- مسیر کامل پرواز انتخاب‌شده (رنگ متمایز آبی) -----
+      map.addLayer({
+        id: "sel-track",
+        type: "line",
+        source: "sel-track",
+        layout: { "line-cap": "round", "line-join": "round" },
+        paint: {
+          "line-color": TRACK_COLOR,
+          "line-width": 2.4,
+          "line-opacity": 0.9,
+        },
+      });
+
+      // ----- آیکون هواپیماها (رنگ بر اساس نوع) -----
       map.addLayer({
         id: "air-icons",
         type: "symbol",
         source: "air",
         layout: {
-          "icon-image": "plane-icon",
+          "icon-image": ["concat", "plane-", ["get", "cat"]],
           "icon-size": 0.42,
           "icon-rotate": ["get", "rot"],
           "icon-rotation-alignment": "map",
@@ -305,31 +404,80 @@ const Traffic = () => {
         },
       });
 
-      // ----- Popup و cursor -----
       const popupOpts = {
         closeButton: false,
         offset: 16,
         className: "tp-popup-wrap",
       };
 
-      map.on("click", "air-icons", (e) => {
-        const p = e.features?.[0]?.properties;
+      const clearTrack = () => {
+        (map.getSource("sel-track") as maplibregl.GeoJSONSource)?.setData(
+          EMPTY_FC,
+        );
+      };
+
+      // ----- کلیک روی هواپیما: popup + مسیر کامل + جزئیات -----
+      map.on("click", "air-icons", async (e) => {
+        const p = e.features?.[0]?.properties as any;
         if (!p) return;
-        new maplibregl.Popup(popupOpts)
+
+        const color = AIR_COLORS[(p.cat as CatGroup) ?? "other"];
+        const catLabel = CATEGORY_LABELS[p.category] ?? "Unknown type";
+
+        const baseRows =
+          `<span>TYPE</span><b>${catLabel}</b>` +
+          `<span>ALT</span><b>${Math.round(p.altitude).toLocaleString()} m</b>` +
+          `<span>SPD</span><b>${Math.round(p.velocity * 3.6)} km/h</b>` +
+          `<span>FROM</span><b>${p.country}</b>`;
+
+        const html = (extra: string) =>
+          `<div class="tp-popup-title"><span class="tp-dot" style="background:${color}"></span>${p.callsign}</div>` +
+          `<div class="tp-popup-grid">${baseRows}${extra}</div>`;
+
+        const popup = new maplibregl.Popup(popupOpts)
           .setLngLat(e.lngLat)
-          .setHTML(
-            `<div class="tp-popup-title"><span class="tp-dot" style="background:${AIR_COLOR}"></span>${p.callsign}</div>` +
-              `<div class="tp-popup-grid">` +
-              `<span>ALT</span><b>${Math.round(p.altitude).toLocaleString()} m</b>` +
-              `<span>SPD</span><b>${Math.round(p.velocity * 3.6)} km/h</b>` +
-              `<span>FROM</span><b>${p.country}</b>` +
-              `</div>`,
-          )
+          .setHTML(html(`<span>…</span><b>loading details</b>`))
           .addTo(map);
+        popup.on("close", clearTrack);
+
+        // مسیر واقعی طی‌شده پرواز را با رنگ متمایز بکش
+        fetchFlightTrack(p.icao24)
+          .then((coords) => {
+            (map.getSource("sel-track") as maplibregl.GeoJSONSource)?.setData(
+              lineToGeoJSON(coords),
+            );
+          })
+          .catch(() => clearTrack());
+
+        // مدل هواپیما + مبدأ/مقصد
+        const [meta, route] = await Promise.allSettled([
+          fetchAircraftMeta(p.icao24),
+          fetchFlightRoute(p.callsign),
+        ]);
+
+        let extra = "";
+        if (meta.status === "fulfilled" && meta.value) {
+          const m = meta.value;
+          const model = [m.model || m.typecode, m.registration]
+            .filter(Boolean)
+            .join(" · ");
+          if (model) extra += `<span>A/C</span><b>${model}</b>`;
+          if (m.operator) extra += `<span>OPR</span><b>${m.operator}</b>`;
+        }
+        if (route.status === "fulfilled" && route.value) {
+          const r = route.value;
+          if (r.origin) extra += `<span>ORIG</span><b>${r.origin}</b>`;
+          if (r.destination)
+            extra += `<span>DEST</span><b>${r.destination}</b>`;
+        }
+        if (!extra) extra = `<span>INFO</span><b>no route data</b>`;
+
+        if (popup.isOpen()) popup.setHTML(html(extra));
       });
 
+      // ----- کلیک روی کشتی -----
       map.on("click", "sea-icons", (e) => {
-        const p = e.features?.[0]?.properties;
+        const p = e.features?.[0]?.properties as any;
         if (!p) return;
         new maplibregl.Popup(popupOpts)
           .setLngLat(e.lngLat)
@@ -369,7 +517,13 @@ const Traffic = () => {
     const data = showAir ? (airQuery.data ?? []) : [];
 
     for (const t of data) {
-      pushTrail(airTrailsRef.current, t.icao24, t.longitude, t.latitude);
+      pushTrail(
+        airTrailsRef.current,
+        t.icao24,
+        t.longitude,
+        t.latitude,
+        catGroup(t.category),
+      );
     }
     pruneTrails(airTrailsRef.current);
 
@@ -388,7 +542,13 @@ const Traffic = () => {
     const data = showSea ? vessels : [];
 
     for (const v of data) {
-      pushTrail(seaTrailsRef.current, String(v.mmsi), v.longitude, v.latitude);
+      pushTrail(
+        seaTrailsRef.current,
+        String(v.mmsi),
+        v.longitude,
+        v.latitude,
+        "other",
+      );
     }
     pruneTrails(seaTrailsRef.current);
 
@@ -403,6 +563,10 @@ const Traffic = () => {
   const weather = weatherQuery.data;
   const wx = weather ? wmoInfo(weather.weatherCode) : null;
 
+  const airRateLimited =
+    (airQuery.error as any)?.response?.status === 429 ||
+    (airQuery.error as any)?.isCooldown;
+
   return (
     <div className="tp-root">
       <div ref={mapContainerRef} className="tp-map" />
@@ -412,7 +576,7 @@ const Traffic = () => {
         <div className="tp-title">TRAFFIC CONSOLE</div>
 
         <div className="tp-row">
-          <span className="tp-row-icon" style={{ color: AIR_COLOR }}>
+          <span className="tp-row-icon" style={{ color: AIR_COLORS.medium }}>
             {"\u2708"}
           </span>
           <span className="tp-row-label">Air Traffic</span>
@@ -443,6 +607,20 @@ const Traffic = () => {
           </label>
         </div>
 
+        {/* راهنمای رنگ نوع هواپیما */}
+        <div className="tp-legend">
+          {AIR_LEGEND.map(({ key, label }) => (
+            <span key={key}>
+              <i style={{ background: AIR_COLORS[key] }} />
+              {label}
+            </span>
+          ))}
+          <span>
+            <i style={{ background: TRACK_COLOR }} />
+            ROUTE
+          </span>
+        </div>
+
         <div className="tp-status">
           <span className={connected ? "tp-pill live" : "tp-pill off"}>
             <span className="tp-pulse" />
@@ -451,8 +629,13 @@ const Traffic = () => {
           {airQuery.isFetching && <span>SYNC…</span>}
         </div>
 
+        {lastError && <div className="tp-error">AIS: {lastError}</div>}
         {airQuery.isError && (
-          <div className="tp-error">Air API error — rate limit / proxy</div>
+          <div className="tp-error">
+            {airRateLimited
+              ? "OpenSky 429 — سهمیه تمام شد، تلاش خودکار بعد از cooldown"
+              : "Air API error — proxy / network"}
+          </div>
         )}
       </div>
 

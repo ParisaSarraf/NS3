@@ -1,25 +1,41 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { AISSTREAM_WS_URL, buildAisSubscription, fetchAirTraffic, fetchWeather } from "../services/trafficService";
+import {
+  AIS_WS_URLS,
+  buildAisSubscription,
+  fetchAirTraffic,
+  fetchWeather,
+  getAirCooldownMs,
+} from "../services/trafficService";
 import type { BBox, VesselTrack } from "../api/trafficTypes";
 
+// =====================================================================
+// ترافیک هوایی — polling با React Query
+//
+// فاصله polling با VITE_AIR_POLL_SECONDS در .env قابل تنظیم است (پیش‌فرض ۶۰ ثانیه).
+// هر فراخوانی states/all برای این bbox حدود ۳ اعتبار (credit) مصرف می‌کند؛
+// سهمیه روزانه: ناشناس ≈۴۰۰ اعتبار، با حساب ≈۴۰۰۰ اعتبار.
+// polling سریع (مثلاً ۱۵ ثانیه) سهمیه را سریع می‌سوزاند و 429 می‌گیرید.
+// =====================================================================
+const AIR_POLL_MS = Number(import.meta.env.VITE_AIR_POLL_SECONDS ?? 60) * 1000;
 
-// =====================================================================
-// ترافیک هوایی — polling با React Query هر ۱۵ ثانیه
-// =====================================================================
 export function useAirTraffic(bbox: BBox, enabled = true) {
   return useQuery({
     queryKey: ["air-traffic", bbox.lamin, bbox.lomin, bbox.lamax, bbox.lomax],
     queryFn: () => fetchAirTraffic(bbox),
-    refetchInterval: 15_000,
-    staleTime: 10_000,
-    retry: 1,
+    // اگر در cooldown سهمیه هستیم (429)، تا پایان آن refetch نکن
+    refetchInterval: () => {
+      const cd = getAirCooldownMs();
+      return cd > 0 ? cd + 5_000 : AIR_POLL_MS;
+    },
+    staleTime: 45_000,
+    retry: false, // روی 429 تکرار نکن — سهمیه بیشتر می‌سوزد
     enabled,
   });
 }
 
 // =====================================================================
-// هواشناسی — هر ۱۰ دقیقه کافی است
+// هواشناسی — هر ۱۰ دقیقه
 // =====================================================================
 export function useWeather(lat: number, lon: number, enabled = true) {
   return useQuery({
@@ -33,38 +49,57 @@ export function useWeather(lat: number, lon: number, enabled = true) {
 }
 
 // =====================================================================
-// ترافیک دریایی — WebSocket زنده از aisstream.io
-// هر کشتی با MMSI کلید می‌خورد و آخرین موقعیت نگه داشته می‌شود
+// ترافیک دریایی — WebSocket زنده + تشخیص خطا
+//
+// برای دیباگ: همه رویدادهای اتصال در Console با پیشوند [AIS] لاگ می‌شوند
+// و آخرین خطا در UI هم نمایش داده می‌شود (lastError).
+// اگر یک endpoint وصل نشد، دفعه بعد endpoint بعدی امتحان می‌شود
+// (پروکسی Vite ⇄ اتصال مستقیم).
 // =====================================================================
 export function useMarineTraffic(bbox: BBox, enabled = true) {
   const [vessels, setVessels] = useState<VesselTrack[]>([]);
   const [connected, setConnected] = useState(false);
+  const [lastError, setLastError] = useState<string | null>(null);
   const vesselMapRef = useRef<Map<number, VesselTrack>>(new Map());
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const urlIndexRef = useRef(0);
 
   useEffect(() => {
     if (!enabled) return;
     if (!import.meta.env.VITE_AISSTREAM_KEY) {
-      console.warn("VITE_AISSTREAM_KEY is not set — marine traffic disabled");
+      setLastError("VITE_AISSTREAM_KEY is not set");
+      console.warn("[AIS] VITE_AISSTREAM_KEY is not set — marine traffic disabled");
       return;
     }
 
     let isMounted = true;
 
     const connect = () => {
-      const ws = new WebSocket(AISSTREAM_WS_URL);
+      const url = AIS_WS_URLS[urlIndexRef.current % AIS_WS_URLS.length];
+      console.info("[AIS] connecting:", url);
+      const ws = new WebSocket(url);
       socketRef.current = ws;
 
       ws.onopen = () => {
         if (!isMounted) return;
+        console.info("[AIS] connected:", url);
         setConnected(true);
+        setLastError(null);
         ws.send(JSON.stringify(buildAisSubscription(bbox)));
       };
 
       ws.onmessage = (event) => {
         try {
           const msg = JSON.parse(event.data as string);
+
+          // aisstream در صورت مشکل (مثلاً کلید نامعتبر) پیام error می‌فرستد و قطع می‌کند
+          if (msg.error) {
+            console.error("[AIS] server error:", msg.error);
+            setLastError(String(msg.error));
+            return;
+          }
+
           const meta = msg.MetaData;
           if (!meta?.MMSI) return;
 
@@ -86,19 +121,24 @@ export function useMarineTraffic(bbox: BBox, enabled = true) {
         }
       };
 
-      ws.onclose = () => {
+      ws.onclose = (e) => {
         if (!isMounted) return;
         setConnected(false);
-        // تلاش مجدد بعد از ۵ ثانیه
+        console.warn("[AIS] closed. code:", e.code, "reason:", e.reason || "(none)");
+        if (e.reason) setLastError(e.reason);
+        // دفعه بعد endpoint بعدی (پروکسی ⇄ مستقیم)
+        urlIndexRef.current += 1;
         reconnectRef.current = setTimeout(connect, 5000);
       };
 
-      ws.onerror = () => ws.close();
+      ws.onerror = () => {
+        console.warn("[AIS] socket error on:", url);
+        ws.close();
+      };
     };
 
     connect();
 
-    // هر ۳ ثانیه state را از روی Map داخلی تازه کن + کشتی‌های قدیمی را حذف کن
     const flushInterval = setInterval(() => {
       const now = Date.now();
       for (const [mmsi, v] of vesselMapRef.current) {
@@ -115,5 +155,5 @@ export function useMarineTraffic(bbox: BBox, enabled = true) {
     };
   }, [bbox.lamin, bbox.lomin, bbox.lamax, bbox.lomax, enabled]);
 
-  return { vessels, connected };
+  return { vessels, connected, lastError };
 }

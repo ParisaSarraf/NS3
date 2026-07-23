@@ -19,6 +19,19 @@ export interface AirTrack {
   verticalRate: number | null;
   onGround: boolean;
   lastContact: number; // unix seconds
+  category: number; // ADS-B emitter category (با extended=1)
+}
+
+export interface AircraftMeta {
+  model: string | null;
+  typecode: string | null;
+  operator: string | null;
+  registration: string | null;
+}
+
+export interface FlightRoute {
+  origin: string | null;
+  destination: string | null;
 }
 
 export interface VesselTrack {

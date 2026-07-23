@@ -1,330 +1,388 @@
-/* ===== Traffic page — dark command-console theme ===== */
+/* =====================================================================
+   Traffic page — تم تیره هماهنگ با NS3 (#060913 / JetBrains Mono)
+   ===================================================================== */
 
 .tp-root {
   position: relative;
   width: 100%;
   height: 100vh;
-  background: #0b0f1c;
+  background: #060913;
   font-family: "JetBrains Mono", monospace;
+  overflow: hidden;
 }
+
 .tp-map {
   position: absolute;
   inset: 0;
 }
 
-/* ---------- Glass panels ---------- */
+/* ---------- پنل شیشه‌ای ---------- */
 .tp-panel {
   position: absolute;
   z-index: 10;
-  background: rgba(10, 14, 26, 0.78);
+  min-width: 240px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(8, 12, 24, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 12px;
-  padding: 14px 16px;
-  color: #fff;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.25),
-    0 8px 24px rgba(0, 0, 0, 0.35);
-  min-width: 224px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  color: #cfe3ff;
 }
+
 .tp-layers {
-  top: 16px;
-  left: 16px;
+  top: 14px;
+  left: 14px;
 }
+
 .tp-weather {
-  top: 16px;
-  right: 16px;
-  width: 248px;
+  top: 14px;
+  right: 14px;
+  min-width: 260px;
 }
 
 .tp-title {
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.65);
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #ffffff;
   margin-bottom: 12px;
 }
+
 .tp-title::before {
   content: "";
   width: 3px;
-  height: 12px;
+  height: 14px;
   border-radius: 2px;
   background: #5e9fe8;
-  display: inline-block;
-}
-.tp-sub {
-  margin-left: auto;
-  font-weight: 400;
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.08em;
 }
 
-/* ---------- Layer rows ---------- */
+.tp-sub {
+  margin-left: auto;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ---------- ردیف لایه‌ها ---------- */
 .tp-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  font-size: 13px;
+  gap: 9px;
+  padding: 7px 0;
 }
-.tp-row + .tp-row {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
+
 .tp-row-icon {
+  font-size: 14px;
   width: 18px;
   text-align: center;
-  font-size: 14px;
-}
-.tp-row-label {
-  flex: 1;
-  color: rgba(255, 255, 255, 0.9);
-}
-.tp-badge {
-  font-size: 11px;
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: rgba(94, 159, 232, 0.14);
-  color: #9cc4f2;
-  min-width: 26px;
-  text-align: center;
 }
 
-/* ---------- Toggle switch ---------- */
+.tp-row-label {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #dbe7ff;
+}
+
+.tp-badge {
+  margin-left: auto;
+  min-width: 30px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(94, 159, 232, 0.16);
+  border: 1px solid rgba(94, 159, 232, 0.3);
+  color: #a9c9f2;
+}
+
+/* ---------- سوییچ ---------- */
 .tp-switch {
   position: relative;
-  display: inline-block;
   width: 34px;
-  height: 19px;
-  flex-shrink: 0;
-}
-.tp-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.tp-switch i {
-  position: absolute;
+  height: 18px;
+  flex: none;
   cursor: pointer;
-  inset: 0;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
-  transition: background 0.15s;
-}
-.tp-switch i::before {
-  content: "";
-  position: absolute;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  left: 3px;
-  top: 3px;
-  background: #fff;
-  transition: transform 0.15s;
-}
-.tp-switch input:checked + i {
-  background: #5e9fe8;
-}
-.tp-switch input:checked + i::before {
-  transform: translateX(15px);
 }
 
-/* ---------- Status pills ---------- */
+.tp-switch input {
+  display: none;
+}
+
+.tp-switch i {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: background 0.2s ease;
+}
+
+.tp-switch i::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.tp-switch input:checked + i {
+  background: #5e9fe8;
+  border-color: #5e9fe8;
+}
+
+.tp-switch input:checked + i::after {
+  transform: translateX(16px);
+}
+
+/* ---------- راهنمای رنگ نوع هواپیما ---------- */
+.tp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tp-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.tp-legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* ---------- وضعیت ---------- */
 .tp-status {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 9px;
-  letter-spacing: 0.12em;
-  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.45);
 }
+
 .tp-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 9px;
-  border-radius: 999px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
+  padding: 3px 9px;
+  border-radius: 999px;
 }
+
 .tp-pill.live {
-  background: rgba(114, 188, 143, 0.14);
   color: #72bc8f;
+  background: rgba(114, 188, 143, 0.12);
+  border: 1px solid rgba(114, 188, 143, 0.35);
 }
+
 .tp-pill.off {
-  background: rgba(233, 115, 102, 0.14);
   color: #e97366;
+  background: rgba(233, 115, 102, 0.1);
+  border: 1px solid rgba(233, 115, 102, 0.3);
 }
+
 .tp-pulse {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: currentColor;
-  animation: tp-pulse 1.6s ease-out infinite;
+  animation: tp-pulse 1.6s ease-in-out infinite;
 }
+
 @keyframes tp-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(114, 188, 143, 0.5);
-  }
+  0%,
   100% {
-    box-shadow: 0 0 0 7px rgba(114, 188, 143, 0);
+    opacity: 1;
+    transform: scale(1);
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tp-pulse {
-    animation: none;
+  50% {
+    opacity: 0.35;
+    transform: scale(0.75);
   }
 }
 
 .tp-error {
-  margin-top: 10px;
-  font-size: 11px;
+  margin-top: 8px;
+  font-size: 9px;
+  letter-spacing: 0.04em;
   color: #e97366;
+  line-height: 1.5;
+  word-break: break-word;
 }
 
-/* ---------- Weather card ---------- */
+/* ---------- کارت هواشناسی ---------- */
 .tp-wx-main {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin: 2px 0 12px;
+  margin-bottom: 12px;
 }
+
 .tp-wx-icon {
   font-size: 34px;
   line-height: 1;
 }
+
 .tp-wx-temp {
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  color: #ffffff;
+  line-height: 1;
 }
+
 .tp-wx-temp span {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.55);
-  margin-left: 2px;
+  color: rgba(255, 255, 255, 0.5);
 }
+
 .tp-wx-cond {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.65);
-  margin-top: 3px;
+  margin-top: 4px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #a9c9f2;
 }
+
 .tp-wx-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 12px;
+  gap: 8px;
 }
+
 .tp-wx-grid > div {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 8px 9px;
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
+
 .tp-wx-grid span {
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 0.12em;
-  color: rgba(255, 255, 255, 0.45);
-}
-.tp-wx-grid b {
-  font-size: 13px;
-  font-weight: 600;
-  color: #fff;
-}
-.tp-wx-grid small {
-  font-size: 9px;
   color: rgba(255, 255, 255, 0.4);
 }
+
+.tp-wx-grid b {
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.tp-wx-grid small {
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
 .tp-wind-arrow {
   display: inline-block;
   font-style: normal;
   color: #5e9fe8;
+  transition: transform 0.4s ease;
 }
+
 .tp-wx-time {
   margin-top: 10px;
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 0.1em;
   color: rgba(255, 255, 255, 0.35);
 }
+
 .tp-wx-loading {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
-  padding: 8px 0;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
 }
 
-/* ---------- Popups ---------- */
+/* ---------- Popup سفارشی ---------- */
 .tp-popup-wrap .maplibregl-popup-content {
   background: rgba(10, 14, 26, 0.92);
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 10px;
   padding: 10px 12px;
   font-family: "JetBrains Mono", monospace;
-  color: #fff;
+  color: #ffffff;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  min-width: 180px;
 }
+
 .tp-popup-wrap .maplibregl-popup-tip {
   border-top-color: rgba(10, 14, 26, 0.92);
   border-bottom-color: rgba(10, 14, 26, 0.92);
 }
+
 .tp-popup-title {
   display: flex;
   align-items: center;
   gap: 7px;
   font-size: 12px;
   font-weight: 700;
+  letter-spacing: 0.06em;
   margin-bottom: 8px;
 }
+
 .tp-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   display: inline-block;
 }
+
 .tp-popup-grid {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 3px 12px;
-  font-size: 11px;
-}
-.tp-popup-grid span {
-  color: rgba(255, 255, 255, 0.5);
-  letter-spacing: 0.08em;
-  font-size: 9px;
-  align-self: center;
-}
-.tp-popup-grid b {
-  font-weight: 600;
+  gap: 4px 12px;
 }
 
-/* ---------- MapLibre controls (dark) ---------- */
-.tp-root .maplibregl-ctrl-group {
-  background: rgba(10, 14, 26, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 10px;
-  overflow: hidden;
+.tp-popup-grid span {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.45);
+  align-self: center;
 }
-.tp-root .maplibregl-ctrl-group button {
-  background: transparent;
+
+.tp-popup-grid b {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
 }
-.tp-root .maplibregl-ctrl-group button + button {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+/* ---------- کنترل زوم تیره ---------- */
+.maplibregl-ctrl-group {
+  background: rgba(8, 12, 24, 0.78) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(14px);
 }
-.tp-root .maplibregl-ctrl button .maplibregl-ctrl-icon {
+
+.maplibregl-ctrl-group button {
+  background: transparent !important;
+}
+
+.maplibregl-ctrl-group button span {
   filter: invert(1) opacity(0.8);
-}
-.tp-root .maplibregl-ctrl-attrib {
-  background: rgba(10, 14, 26, 0.6);
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 10px;
-}
-.tp-root .maplibregl-ctrl-attrib a {
-  color: rgba(255, 255, 255, 0.6);
 }

@@ -31,7 +31,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/opensky/, "/api"),
       },
-      // vite.config.ts — داخل proxy
+      "/opensky-auth": {
+        target: "https://auth.opensky-network.org",
+        changeOrigin: true,
+        rewrite: (p) => p.replace(/^\/opensky-auth/, ""),
+      },
       "/ais-stream": {
         target: "wss://stream.aisstream.io",
         changeOrigin: true,
